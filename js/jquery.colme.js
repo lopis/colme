@@ -37,11 +37,7 @@ function Colme(options) {
     if (!options.selectors) {
         options.selectors = {};
     }
-    if (!options.attributes) {
-        options.attributes = {};
-    }
-
-    this.selectors = {
+    selectors = {
         table : ( options.selectors.table ? options.selectors.table : "#cm-table" ),
         head  : ( options.selectors.head  ? options.selectors.head  : ".cm-thead" ),
         body  : ( options.selectors.body  ? options.selectors.body  : ".cm-tbody" ),
@@ -50,14 +46,10 @@ function Colme(options) {
         td    : ( options.selectors.td    ? options.selectors.td    : ".cm-td" ),
     };
 
-    this.attributes = {
-        colId    : ( options.attributes.id    ? options.attributes.id    : "data-cm-id" ),
-        colGroup : ( options.attributes.group ? options.attributes.group : "data-cm-group" )
-    };
 
-    this.table = $(this.selectors.table);
-    this.head = this.table.find(this.selectors.head);
-    this.body = this.table.find(this.selectors.body);
+   table = $(selectors.table);
+   head =table.find(selectors.head);
+   body =table.find(selectors.body);
 
 
 
@@ -93,19 +85,19 @@ function Colme(options) {
      * @author lopis
      */
     this.resizable = function() {
-        var cm = this;
-        var colIds = this.head.find(this.selectors.th + "[" + this.attributes.colId + "]");
+       /* var cm = this;
+        var colIds = head.find(selectors.th + "[" + attributes.colId + "]");
         console.log(colIds);
         $(colIds).each(function () {
             $(this).resizable({
-                handles:    'e',
-                distance:    3,
-                helper:     'ui-resizable-helper',
-                stop:       function(event, ui) {
+                handles 	: 'e',
+                distance	: 3 ,
+                animate		: true  ,
+                stop		: function(event, ui) {
                     $(cm.selectors.table).trigger('colme:col:resize', [ui]);
                 }
             });
-        });
+        });*/
     }
 
     this.draggable = function() {
@@ -119,6 +111,69 @@ function Colme(options) {
     this.columnsToggleable = function(element) {
 
     }
+
+
+    function addChildren(currParents , th , currentOffset) {
+    	var colSpan = $(th).attr("data-cm-span");
+    	colSpan = parseInt( !colSpan ? "1" : colSpan);
+    	var newChild;
+    	for ( i in currParents ){
+    		console.log( (currentOffset + colSpan) + " <= " + currParents[i].colSpanOffset );
+    			
+    		if ( currentOffset < currParents[i].colSpanOffset + currParents[i].colSpan  ){
+    			newChild = new Node( currParents[i] , colSpan ,currentOffset);
+    			currParents[i].addChildren( newChild );
+    			break;
+    		}
+    	}
+    	return newChild;
+
+    }
+
+    this.createTree = function(){
+    	
+
+    	var root = new Node(undefined,6,0)
+    	var headerRows = head.find(selectors.row);
+    	console.log(headerRows);
+    	var currParents = [root];
+    	// Iteration through each row
+    	//-------------------------------
+    	for (var i = 0; i < headerRows.length; i++) {
+    		
+    		var newParents=[];
+    		var currentOffset = 0;
+    		var ths = $( headerRows[i] ).find(selectors.th);
+    		
+    		// Iterating through each th inside a row
+    		//---------------------------------------
+    		for ( j = 0 ; j < ths.length ; j++ ){
+				var colSpan = $(ths[j]).attr("data-cm-span")
+    			colSpan = parseInt( !colSpan ? "1" : colSpan);
+    			var newChild = 0;
+    			
+    			// Checking which parent is the newChild parent (?)
+    			// ------------------------------------------------
+    			for(k = 0 ; k < currParents.length ; k++){
+    				console.log( currentOffset + " < " + (currParents[k].colSpanOffset + currParents[k].colSpan) );
+					if ( currentOffset < currParents[k].colSpanOffset + currParents[k].colSpan  ){
+    					newChild = new Node( currParents[k] , colSpan ,currentOffset);
+    					currParents[k].addChildren( newChild );
+    					break;
+    				}
+    			}
+    			newParents.push(newChild);
+				currentOffset += colSpan ;
+    		}
+    		
+
+    		currParents = newParents;
+    	
+
+    	}
+    	console.log(root);
+    }
+
 
     if (options.resizable) {
         // Inits jquery plugin
@@ -140,4 +195,15 @@ function Colme(options) {
 
 }
 
+
+function Node (parent,colSpan,colSpanOffset){
+	this.parent  		= parent;
+	this.children   	= [];
+	this.colSpan    	= colSpan;
+	this.colSpanOffset 	= colSpanOffset;
+
+	this.addChildren = function(child){
+		this.children.push(child);
+	};
+}
 

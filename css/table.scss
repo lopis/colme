@@ -3,6 +3,7 @@
   .cm-tr {
     height: 30px;
     font-size: 0;
+    display: block;
   }
   .cm-th, .cm-td {
     font-size: 12px;
@@ -16,5 +17,16 @@
     &[data-cm-span="2"] {
         width: 200px;
     }
+    &[data-cm-span="4"] {
+        width: 400px;
+    }
+  }
+  .cm-th:nth-child(even) {
+    background-color: indianred;
+    color: white;
+  }
+  .cm-th:nth-child(odd) {
+    background-color: whitesmoke;
+    color: black;
   }
 }

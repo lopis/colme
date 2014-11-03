@@ -10,29 +10,51 @@
     <div id='cm-table'>
       <div class='cm-thead'>
         <div class='cm-tr'>
-          <div class='cm-th' data-cm-group='id' data-cm-span='1'></div>
-          <div class='cm-th' data-cm-group='sales' data-cm-span='2'>sales</div>
+          <div class='cm-th' data-cm-span='2'>Info</div>
+          <div class='cm-th' data-cm-span='4'>sales</div>
         </div>
         <div class='cm-tr'>
-          <div class='cm-th' data-cm-group='id' data-cm-id='id'>name</div>
-          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2013'>2013</div>
-          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2014'>2014</div>
+          <div class='cm-th' data-cm-span='1'>id</div>
+          <div class='cm-th' data-cm-span='1'>name</div>
+          <div class='cm-th' data-cm-span='2'>2011</div>
+          <div class='cm-th' data-cm-span='2'>2012</div>
+        </div>
+        <div class='cm-tr'>
+          <div class='cm-th'></div>
+          <div class='cm-th'></div>
+          <div class='cm-th'>1º Sem</div>
+          <div class='cm-th'>2º Sem</div>
+          <div class='cm-th'>1º Sem</div>
+          <div class='cm-th'>2º Sem</div>
         </div>
       </div>
       <div class='cm-tbody'>
         <div class='cm-tr'>
-          <div class='cm-td' data-cm-group='id' data-cm-id='id'>Tomorrow may be to late</div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'>15</div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'>24</div>
+          <div class='cm-td'>00354</div>
+          <div class='cm-td'>Tomorrow may be to late</div>
+          <div class='cm-td'>15</div>
+          <div class='cm-td'>68</div>
+          <div class='cm-td'>99</div>
+          <div class='cm-td'>101</div>
         </div>
         <div class='cm-tr'>
-          <div class='cm-td' data-cm-group='id' data-cm-id='id'>A mística do número 10</div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'>1</div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'>4</div>
+          <div class='cm-td'>00867</div>
+          <div class='cm-td'>A mística do número 10</div>
+          <div class='cm-td'>1</div>
+          <div class='cm-td'>8</div>
+          <div class='cm-td'>35</div>
+          <div class='cm-td'>8</div>
+        </div>
+        <div class='cm-tr'>
+          <div class='cm-td'>00364</div>
+          <div class='cm-td'>Bambi 2</div>
+          <div class='cm-td'>12</div>
+          <div class='cm-td'>18</div>
+          <div class='cm-td'>135</div>
+          <div class='cm-td'>85</div>
         </div>
       </div>
     </div>
-</body>
 <script type='text/javascript' src='../vendor/jquery.js'></script>
 <script type='text/javascript' src='../vendor/jquery-ui.js'></script>
 <script type='text/javascript' src='../js/jquery.colme.js'></script>
@@ -43,6 +65,8 @@
                 resizable: true
             }
         );
+        cm.createTree();
     });
 </script>
+</body>
 </html>
