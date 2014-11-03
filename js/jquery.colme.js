@@ -2,6 +2,7 @@
  * jquery.colme.js
  * 
  * @author lopis
+ * @dependencies: jquery, jqueryui.resizable
  *
  * MIT License
  * 
@@ -25,31 +26,117 @@
  */
 
 
-function colme(table, options) {
+function Colme(options) {
 
-	this.saveCurrentLayout = function() {
+    /**
+     * Table layouts are objects that describe the layout
+     * of the table, including column widths and order.
+     */
+    this.layouts = {};
 
-	}
+    if (!options.selectors) {
+        options.selectors = {};
+    }
+    if (!options.attributes) {
+        options.attributes = {};
+    }
 
-	this.getLayouts = function() {
+    this.selectors = {
+        table : ( options.selectors.table ? options.selectors.table : "#cm-table" ),
+        head  : ( options.selectors.head  ? options.selectors.head  : ".cm-thead" ),
+        body  : ( options.selectors.body  ? options.selectors.body  : ".cm-tbody" ),
+        row   : ( options.selectors.row   ? options.selectors.row   : ".cm-tr" ),
+        th    : ( options.selectors.th    ? options.selectors.th    : ".cm-th" ),
+        td    : ( options.selectors.td    ? options.selectors.td    : ".cm-td" ),
+    };
 
-	}
+    this.attributes = {
+        colId    : ( options.attributes.id    ? options.attributes.id    : "data-cm-id" ),
+        colGroup : ( options.attributes.group ? options.attributes.group : "data-cm-group" )
+    };
 
-	this.setResizable = function() {
+    this.table = $(this.selectors.table);
+    this.head = this.table.find(this.selectors.head);
+    this.body = this.table.find(this.selectors.body);
 
-	}
 
-	this.setDraggable = function() {
 
-	}
 
-	this.setHeaderSticky = function() {
+    /**
+     * Hides/shows the columns of 'colGroup'.
+     *
+     * @param string colGroup Column group name
+     * @param boolean visible True to show group, False otherwise
+     */
+    this.setColumnVisible = function(colGroup, visible) {
 
-	}
+    }
 
-	this.setColumnsToggleable = function() {
+    this.isColumnVisible = function (colGroup) {
 
-	}
+    }
+
+    this.saveCurrentLayout = function() {
+
+    }
+
+    this.getLayouts = function() {
+
+    }
+
+    this.setLayout = function() {
+
+    }
+
+    /**
+     * Makes columns resizable
+     * @author lopis
+     */
+    this.resizable = function() {
+        var cm = this;
+        var colIds = this.head.find(this.selectors.th + "[" + this.attributes.colId + "]");
+        console.log(colIds);
+        $(colIds).each(function () {
+            $(this).resizable({
+                handles:    'e',
+                distance:    3,
+                helper:     'ui-resizable-helper',
+                stop:       function(event, ui) {
+                    $(cm.selectors.table).trigger('colme:col:resize', [ui]);
+                }
+            });
+        });
+    }
+
+    this.draggable = function() {
+
+    }
+
+    this.headerSticky = function() {
+
+    }
+
+    this.columnsToggleable = function(element) {
+
+    }
+
+    if (options.resizable) {
+        // Inits jquery plugin
+        // Sets handlers for resizing
+        this.resizable();
+    };
+
+    if (options.draggable) {
+        // Sets dragging handlers
+    };
+
+    if (options.sticky) {
+        // Sets scroll handlers to control table header
+    };
+
+    if (options.toggleable) {
+        // Sets toggling handlers
+    };
 
 }
 

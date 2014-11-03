@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Colme demo table</title>
     <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../vendor/jquery-ui.css">
 </head>
 <body>
-    <div class='cm-table'>
+    <div id='cm-table'>
       <div class='cm-thead'>
         <div class='cm-tr'>
           <div class='cm-th' data-cm-group='id' data-cm-span='1'></div>
@@ -32,5 +33,16 @@
       </div>
     </div>
 </body>
+<script type='text/javascript' src='../vendor/jquery.js'></script>
+<script type='text/javascript' src='../vendor/jquery-ui.js'></script>
 <script type='text/javascript' src='../js/jquery.colme.js'></script>
+<script>
+    $(document).ready(function () {
+        var cm = new Colme(
+            {
+                resizable: true
+            }
+        );
+    });
+</script>
 </html>
