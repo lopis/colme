@@ -24,4 +24,33 @@
  * THE SOFTWARE.
  */
 
- 
+
+function colme(table, options) {
+
+	this.saveCurrentLayout = function() {
+
+	}
+
+	this.getLayouts = function() {
+
+	}
+
+	this.setResizable = function() {
+
+	}
+
+	this.setDraggable = function() {
+
+	}
+
+	this.setHeaderSticky = function() {
+
+	}
+
+	this.setColumnsToggleable = function() {
+
+	}
+
+}
+
+

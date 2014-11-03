@@ -1,10 +1,9 @@
 
 # Table of Contents
-<!-- MarkdownTOC depth=2 -->
 
 - [API](#api)
   - [colme(table, options)](#colmetable-options)
-  - [saveCurrentLayout(name](#, extra)
+  - [saveCurrentLayout(name [, extra] )](#saveCurrentLayout)
   - [getLayouts()](#getlayouts)
   - [set_resizable(](#value)
   - [set_draggable(](#value)
@@ -15,7 +14,6 @@
   - ['colme:col:show'](#colmecolshow)
   - ['colme:col:resize'](#colmecolresize)
 
-<!-- /MarkdownTOC -->
 
 
 API
@@ -26,32 +24,32 @@ Applies [colme] to 'table'.
 
 ### Params:
 #### table:
-ould be a div-based html table (e.g. as returned by ``$("#table")`` )
+ould be a div-based html table (e.g. as returned by ``$('#table')`` )
 An example of a table with valid markup:
 
 
-    <div class="table">
-      <div class="cm-thead">
-        <div class="cm-tr">
-          <div class="cm-th" data-cm-group="id" col-span="1"></div>
-          <div class="cm-th" data-cm-group="sales" col-span="2"></div>
+    <div class='cm-table'>
+      <div class='cm-thead'>
+        <div class='cm-tr'>
+          <div class='cm-th' data-cm-group='id' data-cm-span='1'></div>
+          <div class='cm-th' data-cm-group='sales' data-cm-span='2'></div>
         </div>
-        <div class="cm-tr">
-          <div class="cm-th" data-cm-group="id" data-cm-id="id"></div>
-          <div class="cm-th" data-cm-group="sales" data-cm-id="sales2013"></div>
-          <div class="cm-th" data-cm-group="sales" data-cm-id="sales2014"></div>
+        <div class='cm-tr'>
+          <div class='cm-th' data-cm-group='id' data-cm-id='id'></div>
+          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2013'></div>
+          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2014'></div>
         </div>
       </div>
-      <div class="cm-tbody">
-        <div class="cm-tr">
-          <div class="cm-td" data-cm-group="id" data-cm-id="id"></div>
-          <div class="cm-td" data-cm-group="sales" data-cm-id="sales2013"></div>
-          <div class="cm-td" data-cm-group="sales" data-cm-id="sales2014"></div>
+      <div class='cm-tbody'>
+        <div class='cm-tr'>
+          <div class='cm-td' data-cm-group='id' data-cm-id='id'></div>
+          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'></div>
+          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'></div>
         </div>
-        <div class="cm-tr">
-          <div class="cm-td" data-cm-group="id" data-cm-id="id"></div>
-          <div class="cm-td" data-cm-group="sales" data-cm-id="sales2013"></div>
-          <div class="cm-td" data-cm-group="sales" data-cm-id="sales2014"></div>
+        <div class='cm-tr'>
+          <div class='cm-td' data-cm-group='id' data-cm-id='id'></div>
+          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'></div>
+          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'></div>
         </div>
       </div>
     </div>
@@ -65,30 +63,30 @@ Optional field, since it defaults to the class of the root element of 'table'.
 
 #### head-class:
 The class of the div representing the table header.
-Defaults to "cm-thead".
+Defaults to 'cm-thead'.
 
 #### body-class:
 The class of the div representing the table body.
-Defaults to "cm-tbody".
+Defaults to 'cm-tbody'.
 
 #### row-class:
 The class of the div representing the table row.
-Defaults to "cm-tr".
+Defaults to 'cm-tr'.
 
 #### th-class:
 The class of the div representing the header cell.
-Defaults to "cm-th".
+Defaults to 'cm-th'.
 
 #### td-class:
 The class of the div representing the body cell.
-Defaults to "cm-td".
+Defaults to 'cm-td'.
 
 #### col-id-attr:
-The attribute in the cells that identifies a column. Defaults to "data-cm-id".
+The attribute in the cells that identifies a column. Defaults to 'data-cm-id'.
 
 #### col-group-attr:
 The attribute in the cells that identifies a column group.
-Defaults to "data-cm-group".
+Defaults to 'data-cm-group'.
 
 #### resizable:
 Set to 'true' to enable resizable columns.
@@ -104,7 +102,7 @@ Set to 'true' to enable sticky header, i.e. the header stays visible when the pa
 #### toggleable:
 Accepts a class name of the elements that should trigger the hiding and showing of tables.
 
-## saveCurrentLayout(name [, extra] )
+## <a name='saveCurrentLayout'></a> saveCurrentLayout(name [, extra] )
 Saves the current layout of the table, including each column width, column visibility and column order.
 If the name already exists, overwrite the existing layout.
 ### Params:
