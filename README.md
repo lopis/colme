@@ -1,26 +1,25 @@
-colme.js - Javascript Column Managment Environment
-===========================
 
 # Table of Contents
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC depth=2 -->
 
-- [API][api]
-  - [colme(table, options)][colmetable-options]
-  - [saveCurrentLayout(name][, extra]
-  - [getLayouts()][getlayouts]
-  - [set_resizable(][value]
-  - [set_draggable(][value]
-  - [set_header_sticky(][value]
-  - [set_columns_toggleable(][value]
-- [Events][events]
-  - ['colme:col:hide'][colmecolhide]
-  - ['colme:col:show'][colmecolshow]
-  - ['colme:col:resize'][colmecolresize]
+- [API](#api)
+  - [colme(table, options)](#colmetable-options)
+  - [saveCurrentLayout(name](#, extra)
+  - [getLayouts()](#getlayouts)
+  - [set_resizable(](#value)
+  - [set_draggable(](#value)
+  - [set_header_sticky(](#value)
+  - [set_columns_toggleable(](#value)
+- [Events](#events)
+  - ['colme:col:hide'](#colmecolhide)
+  - ['colme:col:show'](#colmecolshow)
+  - ['colme:col:resize'](#colmecolresize)
 
 <!-- /MarkdownTOC -->
 
 
-# API
+API
+===========================
 
 ## colme(table, options)
 Applies [colme] to 'table'.
@@ -105,7 +104,7 @@ Set to 'true' to enable sticky header, i.e. the header stays visible when the pa
 #### toggleable:
 Accepts a class name of the elements that should trigger the hiding and showing of tables.
 
-## saveCurrentLayout(name [, extra])
+## saveCurrentLayout(name [, extra] )
 Saves the current layout of the table, including each column width, column visibility and column order.
 If the name already exists, overwrite the existing layout.
 ### Params:
@@ -149,7 +148,9 @@ Use these to manually enable or disable each feature on the table.
 Set to true to enable the feature or false to disable it.
 Defaults to true.
 
-# Events
+Events
+===========================
+
 ## 'colme:col:hide'
 Event triggered on the table after a column has been hidden
 ### Parameters:
