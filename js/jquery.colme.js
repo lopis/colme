@@ -38,20 +38,23 @@ function Colme(options) {
         options.selectors = {};
     }
     selectors = {
-        table : ( options.selectors.table ? options.selectors.table : "#cm-table" ),
-        head  : ( options.selectors.head  ? options.selectors.head  : ".cm-thead" ),
-        body  : ( options.selectors.body  ? options.selectors.body  : ".cm-tbody" ),
-        row   : ( options.selectors.row   ? options.selectors.row   : ".cm-tr" ),
-        th    : ( options.selectors.th    ? options.selectors.th    : ".cm-th" ),
-        td    : ( options.selectors.td    ? options.selectors.td    : ".cm-td" ),
+        table : ( options.selectors.table ? options.selectors.table : '#cm-table' ),
+        head  : ( options.selectors.head  ? options.selectors.head  : '.cm-thead' ),
+        body  : ( options.selectors.body  ? options.selectors.body  : '.cm-tbody' ),
+        row   : ( options.selectors.row   ? options.selectors.row   : '.cm-tr' ),
+        th    : ( options.selectors.th    ? options.selectors.th    : '.cm-th' ),
+        td    : ( options.selectors.td    ? options.selectors.td    : '.cm-td' ),
     };
 
 
    table = $(selectors.table);
-   head =table.find(selectors.head);
-   body =table.find(selectors.body);
-
-
+   head  = table.find(selectors.head);
+   body  = table.find(selectors.body);
+   colCount = 0;
+   head.find(selectors.row).first().find(selectors.th).each(function () {
+       var c = parseInt($(this).attr('data-cm-span'));
+       colCount += !c ? 1 : c;
+   });
 
 
     /**
@@ -85,19 +88,22 @@ function Colme(options) {
      * @author lopis
      */
     this.resizable = function() {
-       /* var cm = this;
-        var colIds = head.find(selectors.th + "[" + attributes.colId + "]");
-        console.log(colIds);
+        var cm = this;
+        var colIds = head.find(selectors.th);
         $(colIds).each(function () {
             $(this).resizable({
-                handles 	: 'e',
-                distance	: 3 ,
-                animate		: true  ,
-                stop		: function(event, ui) {
-                    $(cm.selectors.table).trigger('colme:col:resize', [ui]);
+                handles  : 'e',
+                distance : 3 ,
+                helper   : 'ui-resizable-helper',
+                start    : function (event, ui) {
+                    $(ui.helper).height(ui.originalSize.height);
+                    console.log(ui);
+                },
+                stop     : function(event, ui) {
+                    $(selectors.table).trigger('colme:col:resize', [ui]);
                 }
             });
-        });*/
+        });
     }
 
     this.draggable = function() {
@@ -113,29 +119,9 @@ function Colme(options) {
     }
 
 
-    function addChildren(currParents , th , currentOffset) {
-    	var colSpan = $(th).attr("data-cm-span");
-    	colSpan = parseInt( !colSpan ? "1" : colSpan);
-    	var newChild;
-    	for ( i in currParents ){
-    		console.log( (currentOffset + colSpan) + " <= " + currParents[i].colSpanOffset );
-    			
-    		if ( currentOffset < currParents[i].colSpanOffset + currParents[i].colSpan  ){
-    			newChild = new Node( currParents[i] , colSpan ,currentOffset);
-    			currParents[i].addChildren( newChild );
-    			break;
-    		}
-    	}
-    	return newChild;
-
-    }
-
     this.createTree = function(){
-    	
-
-    	var root = new Node(undefined,6,0)
+    	var root = new Node(undefined,colCount,0)
     	var headerRows = head.find(selectors.row);
-    	console.log(headerRows);
     	var currParents = [root];
     	// Iteration through each row
     	//-------------------------------
@@ -155,7 +141,6 @@ function Colme(options) {
     			// Checking which parent is the newChild parent (?)
     			// ------------------------------------------------
     			for(k = 0 ; k < currParents.length ; k++){
-    				console.log( currentOffset + " < " + (currParents[k].colSpanOffset + currParents[k].colSpan) );
 					if ( currentOffset < currParents[k].colSpanOffset + currParents[k].colSpan  ){
     					newChild = new Node( currParents[k] , colSpan ,currentOffset);
     					currParents[k].addChildren( newChild );
@@ -165,13 +150,8 @@ function Colme(options) {
     			newParents.push(newChild);
 				currentOffset += colSpan ;
     		}
-    		
-
     		currParents = newParents;
-    	
-
     	}
-    	console.log(root);
     }
 
 

@@ -1,3 +1,4 @@
 README.html
 vendor/
-css/**css.map
+css/**.css.map
+css/**.css
