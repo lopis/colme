@@ -146,7 +146,7 @@ function Colme(options) {
                     })
 
                     // Resize table body
-                    
+
 
                 }
             });
@@ -185,15 +185,15 @@ function Colme(options) {
             // Iterating through each th inside a row
             //---------------------------------------
             for ( j = 0 ; j < ths.length ; j++ ){
-                var colSpan = $(ths[j]).attr(attributes.span)
-                colSpan = parseInt( !colSpan ? "1" : colSpan);
+                var colspan = $(ths[j]).attr(attributes.span)
+                colspan = parseInt( !colspan ? "1" : colspan);
                 var newChild = 0;
 
                 // Checking which parent is the newChild parent (?)
                 // ------------------------------------------------
                 for(k = 0 ; k < currParents.length ; k++){
-                    if ( currentOffset < currParents[k].colSpanOffset + currParents[k].colSpan  ){
-                        newChild = new Node( currParents[k], colSpan, currentOffset, 'cm-'+i+'-'+j+'-'+k );
+                    if ( currentOffset < currParents[k].colspanOffset + currParents[k].colspan  ){
+                        newChild = new Node( currParents[k], colspan, currentOffset, 'cm-'+i+'-'+j+'-'+k );
                         tableNodes[newChild.id] = newChild;
                         currParents[k].addChild( newChild );
                         $(ths[j]).attr(attributes.id, newChild.id);
@@ -202,15 +202,25 @@ function Colme(options) {
                     }
                 }
                 newParents.push(newChild);
-                currentOffset += colSpan;
+                currentOffset += colspan;
             }
             currParents = newParents;
         }
 
+        var thCursor = 0;
+        var tdCursor = 0;
+        var tds = body.find(selectors.td);
+        head.find(selectors.row).last().find(selectors.th).each(function () {
+            var thNode = tableNodes[$(this).attr(attributes.id)];
+            thCursor += thNode.colspan;
+            console.log(thNode);
+            while(tdCursor < thCursor) {
+                console.log(thNode.classes);
+                $(tds[tdCursor]).addClass(thNode.classes);
+                tdCursor += $(tds[tdCursor]).attr(attributes.span) ? $(tds[tdCursor]).attr(attributes.span) : 1;
+            }
+        });
 
-        for (var i = 0; i < Things.length; i++) {
-            Things[i]
-        };
     }
 
     this.createTree();
@@ -244,12 +254,12 @@ function Colme(options) {
  * on the table. If changes occur, the tree must be
  * refreshed with this.updateTable().
  */
-function Node (parent,colSpan,colSpanOffset,newId){
+function Node (parent,colspan,colspanOffset,newId){
     this.parent         = parent;
     this.children       = [];
-    this.colSpan        = colSpan;
-    this.colSpanOffset  = colSpanOffset; // Only used to build the tree
-    this.id             = !newId ? Math.random() : newId;
+    this.colspan        = colspan;
+    this.colspanOffset  = colspanOffset; // Only used to build the tree
+    this.id             = !newId ? '' : newId;
     this.classes        = ''
 
     if (this.parent) {
