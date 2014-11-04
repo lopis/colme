@@ -117,8 +117,6 @@ function Colme(options) {
                 helper   : 'ui-resizable-helper',
                 start    : function (event, ui) {
                     $(ui.helper).height(ui.originalSize.height);
-                    console.log('');
-                    console.log(ui.originalSize.width);
                 },
                 stop     : function(event, ui) {
                     var element = $(ui.element.context);
@@ -126,7 +124,7 @@ function Colme(options) {
                     ui.size.width = ui.size.width - ui.size.width % (span ? span : 1);
                     element.width(ui.size.width);
 
-                    $(selectors.table).trigger('colme:col:resize', ui);
+                    table.trigger('colme:col:resize', ui);
 
                     var thisNode = tableNodes[element.attr(attributes.id)]
                     var delta = ui.size.width - ui.originalSize.width;
@@ -138,15 +136,12 @@ function Colme(options) {
                     }
 
                     // Set width of children column groups
-                    head.find('.' + thisNode.id).each(function () {
+                    table.find('.' + thisNode.id).each(function () {
                         var thisWidth = $(this).width();
                         var ratio = thisWidth / ui.originalSize.width;
                         var thisDelta = ratio * delta;
                         $(this).width(thisWidth + thisDelta)
-                    })
-
-                    // Resize table body
-
+                    });
 
                 }
             });
@@ -213,10 +208,24 @@ function Colme(options) {
         head.find(selectors.row).last().find(selectors.th).each(function () {
             var thNode = tableNodes[$(this).attr(attributes.id)];
             thCursor += thNode.colspan;
-            console.log(thNode);
             while(tdCursor < thCursor) {
-                console.log(thNode.classes);
-                $(tds[tdCursor]).addClass(thNode.classes);
+                $(tds[tdCursor]).addClass(thNode.classes + ' ' + thNode.id);
+                tdCursor += $(tds[tdCursor]).attr(attributes.span) ? $(tds[tdCursor]).attr(attributes.span) : 1;
+            }
+        });
+
+
+        var thCursor = 0;
+        var tdCursor = 0;
+        var rows = body.find(selectors.row);
+        var tds = body.find(selectors.td);
+        head.find(selectors.row).last().find(selectors.th).each(function () {
+            var thNode = tableNodes[$(this).attr(attributes.id)];
+            thCursor += thNode.colspan;
+            while(tdCursor < thCursor) {
+                rows.each(function () {
+                    $(this).children().eq(tdCursor).addClass(thNode.classes + ' ' + thNode.id);
+                });
                 tdCursor += $(tds[tdCursor]).attr(attributes.span) ? $(tds[tdCursor]).attr(attributes.span) : 1;
             }
         });
@@ -260,7 +269,7 @@ function Node (parent,colspan,colspanOffset,newId){
     this.colspan        = colspan;
     this.colspanOffset  = colspanOffset; // Only used to build the tree
     this.id             = !newId ? '' : newId;
-    this.classes        = ''
+    this.classes        = '';
 
     if (this.parent) {
         this.classes = this.parent.classes + ' ' + this.parent.id;

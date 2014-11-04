@@ -10,15 +10,12 @@
   overflow: hidden;
   text-oveflow: ellipsis;
   width: 100px; }
-  #cm-table [data-cm-span="2"] {
-    width: 200px;
-  }
-  #cm-table [data-cm-span="4"] {
-    width: 400px;
-  }
-  #cm-table [data-cm-span="6"] {
-    width: 600px;
-  }
+  #cm-table .cm-th[data-cm-span="2"], #cm-table .cm-td[data-cm-span="2"] {
+    width: 200px; }
+  #cm-table .cm-th[data-cm-span="4"], #cm-table .cm-td[data-cm-span="4"] {
+    width: 400px; }
+  #cm-table .cm-th[data-cm-span="6"], #cm-table .cm-td[data-cm-span="6"] {
+    width: 600px; }
 #cm-table .cm-th:nth-child(even) {
   background-color: indianred;
   color: white; }

@@ -20,6 +20,9 @@
     &[data-cm-span="4"] {
         width: 400px;
     }
+    &[data-cm-span="6"] {
+        width: 600px;
+    }
   }
   .cm-th:nth-child(even) {
     background-color: indianred;
