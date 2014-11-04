@@ -1,21 +1,23 @@
 /**
  * jquery.colme.js
- * 
+ *
  * @authors lopis, carlosmtx
  * @dependencies: jquery, jqueryui.resizable
+ * @moto: é um plugin e vai ficar awesome
+ * @moto2: o que é que nós não fazemos? nada.
  *
  * MIT License
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * * * The above copyright notice and this permission notice shall be included in
  * * * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,7 +37,7 @@ function Colme(options) {
     layouts = {};
 
     /**
-     * Each table node is kept in this object, accessible 
+     * Each table node is kept in this object, accessible
      * with the Id of the node (selectors.span)
      */
     tableNodes = {};
@@ -98,7 +100,9 @@ function Colme(options) {
     this.setLayout = function() {
 
     }
-
+    this.doYouBelieveInMiracles = function(){
+        return "Hey! Thank You for using this plugin! We realy had a blast making it! Kisses if you are a hot girl!"
+    }
     /**
      * Makes columns resizable
      * @author lopis
@@ -113,32 +117,36 @@ function Colme(options) {
                 helper   : 'ui-resizable-helper',
                 start    : function (event, ui) {
                     $(ui.helper).height(ui.originalSize.height);
+                    console.log('');
+                    console.log(ui.originalSize.width);
                 },
                 stop     : function(event, ui) {
+                    var element = $(ui.element.context);
+                    var span = element.attr(attributes.span);
+                    ui.size.width = ui.size.width - ui.size.width % (span ? span : 1);
+                    element.width(ui.size.width);
+
                     $(selectors.table).trigger('colme:col:resize', ui);
-                    var thisNode = tableNodes[$(ui.element.context).attr(attributes.id)]
+
+                    var thisNode = tableNodes[element.attr(attributes.id)]
                     var delta = ui.size.width - ui.originalSize.width;
+
                     // Set width of ancestors column groups
                     for(ancestor = thisNode.parent; ancestor && ancestor.parent ; ancestor = ancestor.parent) {
-                        ancestorDOM = $('[' + attributes.id + '=' + ancestor.id + ']');
+                        var ancestorDOM = $('[' + attributes.id + '=' + ancestor.id + ']');
                         ancestorDOM.width(ancestorDOM.width() + delta);
                     }
 
                     // Set width of children column groups
-                    var sign       = delta < 0? -1 : 1 // Note: JS abs doesn't like negatives
-                    delta = Math.abs(delta);
-                    var widthSlice = sign * Math.floor(delta / thisNode.children.length);
-                    var remainder  = delta % thisNode.children.length; 
-                    for (i=0; i < thisNode.children.length; i++) {
-                        var child = thisNode.children[i];
-                        childDOM = $('[' + attributes.id + '=' + child.id + ']');
-                        childDOM.width(childDOM.width() + widthSlice + (sign * (remainder > 0)));
-                        
-                        remainder--;
-                    };
+                    head.find('.' + thisNode.id).each(function () {
+                        var thisWidth = $(this).width();
+                        var ratio = thisWidth / ui.originalSize.width;
+                        var thisDelta = ratio * delta;
+                        $(this).width(thisWidth + thisDelta)
+                    })
 
                     // Resize table body
-
+                    
 
                 }
             });
@@ -169,26 +177,27 @@ function Colme(options) {
         // Iteration through each row
         //-------------------------------
         for (var i = 0; i < headerRows.length; i++) {
-            
+
             var newParents=[];
             var currentOffset = 0;
             var ths = $( headerRows[i] ).find(selectors.th);
-            
+
             // Iterating through each th inside a row
             //---------------------------------------
             for ( j = 0 ; j < ths.length ; j++ ){
                 var colSpan = $(ths[j]).attr(attributes.span)
                 colSpan = parseInt( !colSpan ? "1" : colSpan);
                 var newChild = 0;
-                
+
                 // Checking which parent is the newChild parent (?)
                 // ------------------------------------------------
                 for(k = 0 ; k < currParents.length ; k++){
                     if ( currentOffset < currParents[k].colSpanOffset + currParents[k].colSpan  ){
-                        newChild = new Node( currParents[k], colSpan, currentOffset, '0'+i+'0'+j+'0'+k );
+                        newChild = new Node( currParents[k], colSpan, currentOffset, 'cm-'+i+'-'+j+'-'+k );
                         tableNodes[newChild.id] = newChild;
-                        currParents[k].addChildren( newChild );
+                        currParents[k].addChild( newChild );
                         $(ths[j]).attr(attributes.id, newChild.id);
+                        $(ths[j]).addClass(newChild.classes);
                         break;
                     }
                 }
@@ -197,6 +206,11 @@ function Colme(options) {
             }
             currParents = newParents;
         }
+
+
+        for (var i = 0; i < Things.length; i++) {
+            Things[i]
+        };
     }
 
     this.createTree();
@@ -226,7 +240,7 @@ function Colme(options) {
  * internally by a tree, composed of Nodes.
  * The tree can be transversed in both directions to
  * allow propagation of actions up and down.
- * The tree never changes after performing an action 
+ * The tree never changes after performing an action
  * on the table. If changes occur, the tree must be
  * refreshed with this.updateTable().
  */
@@ -236,9 +250,13 @@ function Node (parent,colSpan,colSpanOffset,newId){
     this.colSpan        = colSpan;
     this.colSpanOffset  = colSpanOffset; // Only used to build the tree
     this.id             = !newId ? Math.random() : newId;
+    this.classes        = ''
 
+    if (this.parent) {
+        this.classes = this.parent.classes + ' ' + this.parent.id;
+    };
 
-    this.addChildren = function(child){
+    this.addChild = function(child){
         this.children.push(child);
     };
 }
