@@ -25,7 +25,7 @@ Applies [colme] to 'table'.
 ### Params:
 #### table:
 ould be a div-based html table (e.g. as returned by ``$('#table')`` )
-An example of a table with valid markup:
+An example of a table with valid markup :
 
 
     <div class='cm-table'>
