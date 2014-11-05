@@ -24,11 +24,11 @@
         width: 600px;
     }
   }
-  .cm-th:nth-child(even) {
+  .cm-th:nth-child(even) , .cm-td:nth-child(even) {
     background-color: indianred;
     color: white;
   }
-  .cm-th:nth-child(odd) {
+  .cm-th:nth-child(odd) , .cm-td:nth-child(even){
     background-color: whitesmoke;
     color: black;
   }
@@ -44,3 +44,4 @@
   }
 
 @import 'colme';
+

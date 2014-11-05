@@ -132,9 +132,10 @@ function Colme(options) {
                     rootNode.DOMelement.width(initialWidth)
                     rootNode.resizeAcumulator =0;
                     rootNode.resizeAmount = absDelta;
-                    console.log(absDelta);
+
                     var stack = [ {iterated : false , node : rootNode } ];
-                    var finalNodes =[{iterated : false , node : rootNode }];
+                    var childrenNodes =[{iterated : false , node : rootNode }];
+                    var leafNodes = [];
                     var lost =0;
                     // Traversing the tree 
                     // -------------------
@@ -152,14 +153,14 @@ function Colme(options) {
                         for ( var i = 0 ; i < current.node.children.length ; i++ ){
                             var theNew = {iterated : false , node : current.node.children[i] };
                             theNew.node.resizeAmount    = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() ) ;
-                            console.log ( theNew.node.resizeAmount );
                             theNew.node.resizeAcumulator= 0; 
                             stack.push(theNew);
-                            finalNodes.push(theNew);
+                            childrenNodes.push(theNew);
                         }
                         //The current node is a final node , the current node can be resized without problem
                         if ( current.node.children.length == 0){
-                            current.node.resizeAcumulator = current.node.resizeAmount;    
+                            current.node.resizeAcumulator = current.node.resizeAmount; 
+                            leafNodes.push(current);   
                         }
                         //The current node was visited
                         //----------------------------
@@ -169,8 +170,14 @@ function Colme(options) {
                     } while ( stack.length > 1);
 
                     // Applying possible width to all the descendant nodes 
-                    for ( var i = 0 ; i < finalNodes.length ; i++){
-                        finalNodes[i].node.DOMelement.width( finalNodes[i].node.resizeAcumulator * sign + finalNodes[i].node.DOMelement.width()   );
+                    for ( var i = 0 ; i < childrenNodes.length ; i++){
+                        childrenNodes[i].node.DOMelement.width( childrenNodes[i].node.resizeAcumulator * sign + childrenNodes[i].node.DOMelement.width()   );
+                    }
+
+                    // Applying possible width to all the body elements
+                    for ( var i = 0 ; i < leafNodes.length ; i++){
+                        var id = leafNodes[i].node.DOMelement.attr(attributes.id);
+                        body.find( "." + id ).width( leafNodes[i].node.DOMelement.width() );
                     }
 
                     // Applying possible width to all parent nodes
@@ -178,7 +185,7 @@ function Colme(options) {
                         ancestor.DOMelement.width( ancestor.DOMelement.width() + rootNode.resizeAcumulator * sign );
                     }
 
-                    
+
 
 
                 }
