@@ -1,42 +1,47 @@
 
-#cm-table {
-  .cm-tr {
-    height: 30px;
-    font-size: 0;
-    display: block;
-  }
-  .cm-th, .cm-td {
-    font-size: 12px;
-    display: inline-block;
-    height: 100%;
-    line-height: 30px;
-    overflow: hidden;
-    text-oveflow: ellipsis;
-    width: 100px;
 
-    &[data-cm-span="2"] {
-        width: 200px;
-    }
-    &[data-cm-span="4"] {
-        width: 400px;
-    }
-    &[data-cm-span="6"] {
-        width: 600px;
-    }
+.cm-tr {
+  height: 30px;
+  font-size: 0;
+  display: block;
+}
+.cm-th, .cm-td {
+  font-size: 12px;
+  display: inline-block;
+  height: 100%;
+  line-height: 30px;
+  overflow: hidden;
+  text-oveflow: ellipsis;
+  width: 100px;
+
+  &[data-cm-span="2"] {
+      width: 200px;
   }
-  .cm-th:nth-child(even) {
-    background-color: indianred;
-    color: white;
+  &[data-cm-span="4"] {
+      width: 400px;
   }
-  .cm-th:nth-child(odd) {
-    background-color: whitesmoke;
-    color: black;
+  &[data-cm-span="6"] {
+      width: 600px;
   }
 }
+.cm-th:nth-child(even) {
+  background-color: indianred;
+  color: white;
+}
+.cm-th:nth-child(odd) {
+  background-color: whitesmoke;
+  color: black;
+}
+
 .ui-resizable-helper{
 height: 1000px;
 border-right: 2px solid black;
 width: 5px;
+}
+
+.ui-resizable-handle {
+  width: 15px !important;
+  background-color: cyan;
 }
 
 @import 'colme';

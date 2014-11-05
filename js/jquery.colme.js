@@ -108,48 +108,81 @@ function Colme(options) {
      * @author lopis
      */
     this.resizable = function() {
-        var cm = this;
-        var colIds = head.find(selectors.th + '[' + attributes.id + ']');
-        $(colIds).each(function () {
-            $(this).resizable({
-                handles  : 'e',
-                distance : 3 ,
-                helper   : 'ui-resizable-helper',
-                start    : function (event, ui) {
-                    $(ui.helper).height(ui.originalSize.height);
-                },
-                stop     : function(event, ui) {
-                    var element = $(ui.element.context);
-                    var span = element.attr(attributes.span);
-                    ui.size.width = ui.size.width - ui.size.width % (span ? span : 1);
-                    element.width(ui.size.width);
 
-                    table.trigger('colme:col:resize', ui);
-
-                    var thisNode = tableNodes[element.attr(attributes.id)]
-                    var delta = ui.size.width - ui.originalSize.width;
-
-                    // Set width of ancestors column groups
-                    for(ancestor = thisNode.parent; ancestor && ancestor.parent ; ancestor = ancestor.parent) {
-                        var ancestorDOM = $('[' + attributes.id + '=' + ancestor.id + ']');
-                        ancestorDOM.width(ancestorDOM.width() + delta);
-                    }
-
-                    // Set width of children column groups
-                    table.find('.' + thisNode.id).each(function () {
-                        var thisWidth = $(this).width();
-                        var ratio = thisWidth / ui.originalSize.width;
-                        var thisDelta = ratio * delta;
-                        $(this).width(thisWidth + thisDelta)
-                    });
-
-                }
-            });
-        });
     }
 
     this.draggable = function() {
+        // Create floater
+        var floater = $('<div>', {id: 'cm-floater'});
+        floater.append($('<div>', {class: selectors.head.replace('.','')}));
+        floater.append($('<div>', {class: selectors.body.replace('.','')}));
+        floater.css({position: 'fixed'})
+        $('body').append(floater);
 
+        // Initialize handler for column dragging
+        $(selectors.th).mousedown(function(event) {
+
+            /** Initial position of the element in the page **/
+            var element = {
+                startPosX: $(this).offset().left - $(window).scrollLeft(),
+                startPosY: $(this).offset().top
+            };
+
+            var mouse = {
+                mouseStartPosX: event.pageX - element.startPosX,
+                mouseStartPosY: event.pageY - element.startPosY
+            };
+
+            /** Width of this column (or column group) **/
+            var width = $(this).width();
+
+            /** Create a placeholder where the cells before moved are **/
+            var groupId = $(this).attr(attributes.id);
+            var headerClass = selectors.th.replace('.','');
+            var bodyClass = selectors.td.replace('.','');
+            var placeholderHeader = $('<div>', {class: 'cm-drag-placeholder ' + headerClass, width: width});
+            var placeholderBody   = $('<div>', {class: 'cm-drag-placeholder ' + bodyClass, width: width});
+            
+            $(this).after(placeholderHeader.clone()); // Add placeholder infront of itself
+            head.find(selectors.row).each(function () { // Then to the "children" in the header
+                afterLastOfType($(this), groupId, placeholderHeader.clone());
+            });
+
+            body.find(selectors.row).each(function () { // And in the children in the body
+                afterLastOfType($(this), groupId, placeholderBody.clone());
+            });
+
+            /** Sets initial position of the floater **/
+            var floater = $("#cm-floater");
+            floater.css('top', head.offset().top - $(document).scrollTop());
+            floater.css('left', element.startPosX);
+
+            /** Copy cells of this col group into the floater **/
+            var floater     = $('#cm-floater');
+            var floaterHead = floater.find(selectors.head);
+            var floaterBody = floater.find(selectors.body);
+
+            head.find(selectors.row).each(function () {
+                var thisRowCells = $(this).find('.' + groupId + ' ,[' + attributes.id + '=' + groupId + ']');
+                var newRow = $('<div>', {class: selectors.row.replace('.','')});
+                newRow.append(thisRowCells); // Moves cells to the new row in the floater
+                floaterHead.append(newRow);
+            });
+            body.find(selectors.row).each(function () {
+                var thisRowCells = $(this).find('.' + groupId);
+                var newRow = $('<div>', {class: selectors.row.replace('.','')});
+                newRow.append(thisRowCells); // Moves cells to the new row in the floater
+                floaterBody.append(newRow);
+            });
+
+        });
+    }
+
+    function afterLastOfType (element, groupId, afterElement) {
+        var lastOfGroup = element.find('.' + groupId).last();
+        if (lastOfGroup.length > 0) {
+            lastOfGroup.after(afterElement);
+        };
     }
 
     this.headerSticky = function() {
@@ -235,13 +268,13 @@ function Colme(options) {
     this.createTree();
 
     if (options.resizable) {
-        // Inits jquery plugin
-        // Sets handlers for resizing
+        // Inits jquery plugin and Sets handlers for resizing
         this.resizable();
     };
 
     if (options.draggable) {
         // Sets dragging handlers
+        this.draggable();
     };
 
     if (options.sticky) {
