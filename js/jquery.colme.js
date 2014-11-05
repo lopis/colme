@@ -119,29 +119,67 @@ function Colme(options) {
                     $(ui.helper).height(ui.originalSize.height);
                 },
                 stop     : function(event, ui) {
+                    var initialWidth    = ui.originalSize.width;
+                    var finalWidth      = ui.size.width;
+                    var delta           = finalWidth - initialWidth;
+                    var absDelta        = Math.abs(delta);
+                    var sign            = delta > 0 ? 1 : -1;
+
                     var element = $(ui.element.context);
-                    var span = element.attr(attributes.span);
-                    ui.size.width = ui.size.width - ui.size.width % (span ? span : 1);
-                    element.width(ui.size.width);
+                    var span    = element.attr(attributes.span);
+                    
+                    var rootNode = tableNodes[element.attr(attributes.id)]
+                    rootNode.DOMelement.width(initialWidth)
+                    rootNode.resizeAcumulator =0;
+                    rootNode.resizeAmount = absDelta;
+                    console.log(absDelta);
+                    var stack = [ {iterated : false , node : rootNode } ];
+                    var finalNodes =[{iterated : false , node : rootNode }];
+                    var lost =0;
+                    // Traversing the tree 
+                    // -------------------
+                    do{
+                        var current = stack[stack.length -1];
+                        //The current node and all its children were already visited
+                        //----------------------------------------------------------
+                        if ( current.iterated ){
+                            stack.pop();
+                            current.node.parent.resizeAcumulator += current.node.resizeAcumulator;
+                            continue;
+                        }
+                        //The node children must be visited to determine the current node width change
+                        //----------------------------------------------------------------------------
+                        for ( var i = 0 ; i < current.node.children.length ; i++ ){
+                            var theNew = {iterated : false , node : current.node.children[i] };
+                            theNew.node.resizeAmount    = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() ) ;
+                            console.log ( theNew.node.resizeAmount );
+                            theNew.node.resizeAcumulator= 0; 
+                            stack.push(theNew);
+                            finalNodes.push(theNew);
+                        }
+                        //The current node is a final node , the current node can be resized without problem
+                        if ( current.node.children.length == 0){
+                            current.node.resizeAcumulator = current.node.resizeAmount;    
+                        }
+                        //The current node was visited
+                        //----------------------------
+                        current.iterated = true;
 
-                    table.trigger('colme:col:resize', ui);
 
-                    var thisNode = tableNodes[element.attr(attributes.id)]
-                    var delta = ui.size.width - ui.originalSize.width;
+                    } while ( stack.length > 1);
 
-                    // Set width of ancestors column groups
-                    for(ancestor = thisNode.parent; ancestor && ancestor.parent ; ancestor = ancestor.parent) {
-                        var ancestorDOM = $('[' + attributes.id + '=' + ancestor.id + ']');
-                        ancestorDOM.width(ancestorDOM.width() + delta);
+                    // Applying possible width to all the descendant nodes 
+                    for ( var i = 0 ; i < finalNodes.length ; i++){
+                        finalNodes[i].node.DOMelement.width( finalNodes[i].node.resizeAcumulator * sign + finalNodes[i].node.DOMelement.width()   );
                     }
 
-                    // Set width of children column groups
-                    table.find('.' + thisNode.id).each(function () {
-                        var thisWidth = $(this).width();
-                        var ratio = thisWidth / ui.originalSize.width;
-                        var thisDelta = ratio * delta;
-                        $(this).width(thisWidth + thisDelta)
-                    });
+                    // Applying possible width to all parent nodes
+                    for(ancestor = rootNode.parent; ancestor ; ancestor = ancestor.parent) {
+                        ancestor.DOMelement.width( ancestor.DOMelement.width() + rootNode.resizeAcumulator * sign );
+                    }
+
+                    
+
 
                 }
             });
@@ -149,6 +187,11 @@ function Colme(options) {
     }
 
     this.draggable = function() {
+
+    //Creating Floater div
+    //--------------------
+    
+    $('body').find("")       
 
     }
 
@@ -188,11 +231,13 @@ function Colme(options) {
                 // ------------------------------------------------
                 for(k = 0 ; k < currParents.length ; k++){
                     if ( currentOffset < currParents[k].colspanOffset + currParents[k].colspan  ){
-                        newChild = new Node( currParents[k], colspan, currentOffset, 'cm-'+i+'-'+j+'-'+k );
+                        newChildId = 'cm-'+i+'-'+j+'-'+k ;
+                        $(ths[j]).addClass(newChild.classes);
+                        $(ths[j]).attr(attributes.id, newChildId);
+                        
+                        newChild = new Node( currParents[k], colspan, currentOffset, newChildId );
                         tableNodes[newChild.id] = newChild;
                         currParents[k].addChild( newChild );
-                        $(ths[j]).attr(attributes.id, newChild.id);
-                        $(ths[j]).addClass(newChild.classes);
                         break;
                     }
                 }
@@ -270,6 +315,14 @@ function Node (parent,colspan,colspanOffset,newId){
     this.colspanOffset  = colspanOffset; // Only used to build the tree
     this.id             = !newId ? '' : newId;
     this.classes        = '';
+    this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
+
+
+    //This Elements exist to help the tree traversing when resizing
+    //-------------------------------------------------
+    this.resizeAcumulator = 0; 
+    this.resizeAmount = 0;
+
 
     if (this.parent) {
         this.classes = this.parent.classes + ' ' + this.parent.id;
