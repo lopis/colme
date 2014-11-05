@@ -42,6 +42,8 @@ function Colme(options) {
      */
     tableNodes = {};
 
+    floaterPos = {};
+
     if (!options.selectors) {
         options.selectors = {};
     }
@@ -67,7 +69,7 @@ function Colme(options) {
    head  = table.find(selectors.head);
    body  = table.find(selectors.body);
    colCount = 0;
-
+   colme = this;
 
    head.find(selectors.row).first().find(selectors.th).each(function () {
        var c = parseInt($(this).attr(attributes.span));
@@ -76,7 +78,7 @@ function Colme(options) {
 
 
     /**
-     * Hides/shows the columns of 'colGroup'.
+     * Enables hinding and showing groups of columns.
      *
      * @param string colGroup Column group name
      * @param boolean visible True to show group, False otherwise
@@ -100,12 +102,21 @@ function Colme(options) {
     this.setLayout = function() {
 
     }
+
+    /**
+     * Makes miracles.
+     *
+     * @author Your Heart
+     * @param Hapiness
+     */
     this.doYouBelieveInMiracles = function(){
         return "Hey! Thank You for using this plugin! We realy had a blast making it! Kisses if you are a hot girl!"
     }
+
     /**
      * Makes columns resizable
      * @author lopis
+     * @author carlosmtx
      */
     this.resizable = function() {
         var cm = this;
@@ -192,15 +203,11 @@ function Colme(options) {
 
 
     this.draggable = function() {
-        // Create floater
-        var floater = $('<div>', {id: 'cm-floater'});
-        floater.append($('<div>', {class: selectors.head.replace('.','')}));
-        floater.append($('<div>', {class: selectors.body.replace('.','')}));
-        floater.css({position: 'fixed'})
-        $('body').append(floater);
-
+        
         // Initialize handler for column dragging
         $(selectors.th).mousedown(function(event) {
+
+            $(selectors.th).unbind('mousedown');
 
             /** Initial position of the element in the page **/
             var element = {
@@ -208,10 +215,8 @@ function Colme(options) {
                 startPosY: $(this).offset().top
             };
 
-            var mouse = {
-                mouseStartPosX: event.pageX - element.startPosX,
-                mouseStartPosY: event.pageY - element.startPosY
-            };
+            floaterPos.startPosX = event.pageX - element.startPosX;
+            floaterPos.startPosY = event.pageY - element.startPosY;
 
             /** Width of this column (or column group) **/
             var width = $(this).width();
@@ -241,7 +246,6 @@ function Colme(options) {
             var floater     = $('#cm-floater');
             var floaterHead = floater.find(selectors.head);
             var floaterBody = floater.find(selectors.body);
-
             head.find(selectors.row).each(function () {
                 var thisRowCells = $(this).find('.' + groupId + ' ,[' + attributes.id + '=' + groupId + ']');
                 var newRow = $('<div>', {class: selectors.row.replace('.','')});
@@ -254,9 +258,22 @@ function Colme(options) {
                 newRow.append(thisRowCells); // Moves cells to the new row in the floater
                 floaterBody.append(newRow);
             });
+
+            /** Bind position of the floater to mouse movement **/
+            $(window).mousemove(function(event) {
+                refreshFloater(event);
+                refreshPlaceHolder(event);
+            });
+            $(window).mouseup(stopDrag);
         });
     }
 
+    /**
+     * Util function to add 'afterElement' after the
+     * last found element with a given class 'groupId'
+     *
+     * @author lopis
+     */
     function afterLastOfType (element, groupId, afterElement) {
         var lastOfGroup = element.find('.' + groupId).last();
         if (lastOfGroup.length > 0) {
@@ -264,6 +281,51 @@ function Colme(options) {
         };
     }
 
+    /** 
+     * Updates the position of the floater with 
+     * the current position of the mouse
+     *
+     * @author lopis
+     */
+    function refreshFloater (event) {
+        var mousePos = event.pageX;
+        $('#cm-floater').css('left', mousePos - floaterPos.startPosX);
+    }
+
+    /**
+     * No offense intended. I have seen and enjoyed drag shows.
+     * But this specific drag event stops here.
+     *
+     * @author lopis
+     */
+    function stopDrag () {
+        
+        var floater = $('#table-draggable-floater');
+        var placeHolder = $('.drag-place-holder');
+        floater.css('left', -1000);
+        floater.hide();
+
+        // Removes mouse binds
+        $(window).unbind('mousemove');
+        $(window).unbind('mouseup');
+
+        // Prepends content of the floater to the placeholder
+
+        // Removes the placeholder
+
+        // Restore bind
+        colme.draggable();
+    }
+
+    /**
+     * When the floater moves, try to move the 
+     * columns around.
+     *
+     * @author lopis
+     */
+    function refreshPlaceHolder (event) {
+        
+    }
 
     this.headerSticky = function() {
 
@@ -358,6 +420,13 @@ function Colme(options) {
     };
 
     if (options.draggable) {
+        // Create floater
+        var floater = $('<div>', {id: 'cm-floater'});
+        floater.append($('<div>', {class: selectors.head.replace('.','')}));
+        floater.append($('<div>', {class: selectors.body.replace('.','')}));
+        floater.css({position: 'fixed'})
+        $('body').append(floater);
+
         // Sets dragging handlers
         this.draggable();
     };
