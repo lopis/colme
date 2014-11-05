@@ -1,27 +1,31 @@
-#cm-table .cm-tr {
-  height: 30px;
-  font-size: 0;
-  display: block; }
-#cm-table .cm-th, #cm-table .cm-td {
-  font-size: 12px;
-  display: inline-block;
-  height: 100%;
-  line-height: 30px;
-  overflow: hidden;
-  text-oveflow: ellipsis;
-  width: 100px; }
-  #cm-table .cm-th[data-cm-span="2"], #cm-table .cm-td[data-cm-span="2"] {
-    width: 200px; }
-  #cm-table .cm-th[data-cm-span="4"], #cm-table .cm-td[data-cm-span="4"] {
-    width: 400px; }
-  #cm-table .cm-th[data-cm-span="6"], #cm-table .cm-td[data-cm-span="6"] {
-    width: 600px; }
-#cm-table .cm-th:nth-child(even), #cm-table .cm-td:nth-child(even) {
-  background-color: indianred;
-  color: white; }
-#cm-table .cm-th:nth-child(odd), #cm-table .cm-td:nth-child(even) {
-  background-color: whitesmoke;
-  color: black; }
+#cm-table {
+  overflow-x: scroll;
+  width: 100%;
+  white-space: nowrap; }
+  #cm-table .cm-tr {
+    height: 30px;
+    font-size: 0;
+    display: block; }
+  #cm-table .cm-th, #cm-table .cm-td {
+    font-size: 12px;
+    display: inline-block;
+    height: 100%;
+    line-height: 30px;
+    overflow: hidden;
+    text-oveflow: ellipsis;
+    width: 100px; }
+    #cm-table .cm-th[data-cm-span="2"], #cm-table .cm-td[data-cm-span="2"] {
+      width: 200px; }
+    #cm-table .cm-th[data-cm-span="4"], #cm-table .cm-td[data-cm-span="4"] {
+      width: 400px; }
+    #cm-table .cm-th[data-cm-span="6"], #cm-table .cm-td[data-cm-span="6"] {
+      width: 600px; }
+  #cm-table .cm-th:nth-child(even), #cm-table .cm-td:nth-child(even) {
+    background-color: indianred;
+    color: white; }
+  #cm-table .cm-th:nth-child(odd), #cm-table .cm-td:nth-child(even) {
+    background-color: whitesmoke;
+    color: black; }
 
 .ui-resizable-helper {
   height: 1000px;
