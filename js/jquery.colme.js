@@ -110,7 +110,7 @@ function Colme(options) {
      * @param Hapiness
      */
     this.doYouBelieveInMiracles = function(){
-        return "Hey! Thank You for using this plugin! We realy had a blast making it! Kisses if you are a hot girl!"
+        return "Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!"
     }
 
     /**
@@ -217,6 +217,9 @@ function Colme(options) {
 
             floaterPos.startPosX = event.pageX - element.startPosX;
             floaterPos.startPosY = event.pageY - element.startPosY;
+            floaterPos.lowerBoundX = element.startPosX;
+            floaterPos.lowerBoundY = element.startPosY;
+
 
             /** Width of this column (or column group) **/
             var width = $(this).width();
@@ -269,7 +272,7 @@ function Colme(options) {
     }
 
     /**
-     * Util function to add 'afterElement' after the
+     * Utility function to add 'afterElement' after the
      * last found element with a given class 'groupId'
      *
      * @author lopis
@@ -283,7 +286,9 @@ function Colme(options) {
 
     /** 
      * Updates the position of the floater with 
-     * the current position of the mouse
+     * the current position of the mouse. Restricts
+     * the position of the floater to the limits of
+     * the col group (defined in floaterPos).
      *
      * @author lopis
      */
@@ -300,18 +305,33 @@ function Colme(options) {
      */
     function stopDrag () {
         
-        var floater = $('#table-draggable-floater');
-        var placeHolder = $('.drag-place-holder');
+        var floater     = $('#cm-floater');
+        var floaterHead = floater.find(selectors.head);
+        var floaterBody = floater.find(selectors.body);
+        var placeHolder = $('.cm-drag-placeholder');
         floater.css('left', -1000);
-        floater.hide();
 
-        // Removes mouse binds
+        /** Removes mouse binds **/
         $(window).unbind('mousemove');
         $(window).unbind('mouseup');
 
-        // Prepends content of the floater to the placeholder
+        /** Prepends content of the floater to the placeholder **/
+        floaterHead.find(selectors.row).each(function (rowIndex) {
+            var thisRowCells = $(this).find(selectors.th);
+            head.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder').before(thisRowCells);
+            console.log(head.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder'));
+        });
+        floaterBody.find(selectors.row).each(function (rowIndex) {
+            var thisRowCells = $(this).find(selectors.td);
+            body.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder').before(thisRowCells);
+            console.log(body.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder'));
+        });
 
-        // Removes the placeholder
+        /** Removes the placeholder **/
+        $('.cm-drag-placeholder').remove();
+
+        /** Clears the drag **/
+        floater.find(selectors.row).remove();
 
         // Restore bind
         colme.draggable();
