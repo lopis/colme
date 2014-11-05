@@ -262,6 +262,7 @@ function Colme(options) {
         if (lastOfGroup.length > 0) {
             lastOfGroup.after(afterElement);
         };
+    }
 
 
     this.headerSticky = function() {
