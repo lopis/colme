@@ -1,4 +1,7 @@
 
+#cm-table {
+  white-space: nowrap;
+}
 
 .cm-tr {
   height: 30px;
@@ -24,24 +27,24 @@
       width: 600px;
   }
 }
-.cm-th:nth-child(even) {
+.cm-th:nth-child(even) , .cm-td:nth-child(even) {
   background-color: indianred;
   color: white;
 }
-.cm-th:nth-child(odd) {
+.cm-th:nth-child(odd) , .cm-td:nth-child(even){
   background-color: whitesmoke;
   color: black;
 }
 
 .ui-resizable-helper{
-height: 1000px;
-border-right: 2px solid black;
-width: 5px;
+  height: 1000px;
+  border-right: 2px solid black;
+  width: 5px;
 }
-
-.ui-resizable-handle {
+.ui-resizable-handle{
   width: 15px !important;
-  background-color: cyan;
+  background-color: magenta;
 }
 
 @import 'colme';
+
