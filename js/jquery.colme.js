@@ -251,6 +251,7 @@ function Colme(options) {
             var floaterBody = floater.find(selectors.body);
             head.find(selectors.row).each(function () {
                 var thisRowCells = $(this).find('.' + groupId + ' ,[' + attributes.id + '=' + groupId + ']');
+                console.log(thisRowCells);
                 var newRow = $('<div>', {class: selectors.row.replace('.','')});
                 newRow.append(thisRowCells); // Moves cells to the new row in the floater
                 floaterHead.append(newRow);
@@ -319,12 +320,10 @@ function Colme(options) {
         floaterHead.find(selectors.row).each(function (rowIndex) {
             var thisRowCells = $(this).find(selectors.th);
             head.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder').before(thisRowCells);
-            console.log(head.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder'));
         });
         floaterBody.find(selectors.row).each(function (rowIndex) {
             var thisRowCells = $(this).find(selectors.td);
             body.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder').before(thisRowCells);
-            console.log(body.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder'));
         });
 
         /** Removes the placeholder **/
@@ -384,7 +383,9 @@ function Colme(options) {
                 for(k = 0 ; k < currParents.length ; k++){
                     if ( currentOffset < currParents[k].colspanOffset + currParents[k].colspan  ){
                         newChildId = 'cm-'+i+'-'+j+'-'+k ;
-                        $(ths[j]).addClass(newChild.classes);
+                        $(ths[j]).addClass(currParents[k].classes);
+                        $(ths[j]).addClass(currParents[k].id);
+                        console.log(currParents[k].classes);
                         $(ths[j]).attr(attributes.id, newChildId);
                         
                         newChild = new Node( currParents[k], colspan, currentOffset, newChildId );
