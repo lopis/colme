@@ -2,9 +2,10 @@
   white-space: nowrap; }
 
 #cm-floater {
-  background-color: whitesmoke;
   z-index: 91;
   transform: translateZ(0); }
+  #cm-floater .cm-td, #cm-floater .cm-th {
+    background-color: #FFC1C1; }
 
 .cm-tr {
   height: 30px;

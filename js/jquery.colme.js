@@ -42,7 +42,7 @@ function Colme(options) {
      */
     tableNodes = {};
 
-    floaterPos = {};
+    floater = {};
 
     if (!options.selectors) {
         options.selectors = {};
@@ -65,11 +65,11 @@ function Colme(options) {
     };
 
 
-   table = $(selectors.table);
-   head  = table.find(selectors.head);
-   body  = table.find(selectors.body);
+   table    = $(selectors.table);
+   head     = table.find(selectors.head);
+   body     = table.find(selectors.body);
    colCount = 0;
-   colme = this;
+   colme    = this;
 
    head.find(selectors.row).first().find(selectors.th).each(function () {
        var c = parseInt($(this).attr(attributes.span));
@@ -203,24 +203,30 @@ function Colme(options) {
 
 
     this.draggable = function() {
-        
+
         // Initialize handler for column dragging
         $(selectors.th).mousedown(function(event) {
-
             $(selectors.th).unbind('mousedown');
-
-            /** Initial position of the element in the page **/
-            floaterPos.startPosX   = $(this).offset().left;
-            floaterPos.startPosY   = $(this).offset().top;
-            //floaterPos.lowerBoundX = $(this).offset().left;
-            //floaterPos.lowerBoundY = $(this).offset().top;
-
 
             /** Width of this column (or column group) **/
             var width = $(this).width();
 
-            /** Create a placeholder where the cells before moved are **/
             var groupId = $(this).attr(attributes.id);
+
+            /** Initial position of the element in the page **/
+            floater.startPosX    = $(this).offset().left + $(window).scrollLeft();
+            floater.startPosY    = $(this).offset().top + $(window).scrollTop();
+            floater.mouseOffsetX = event.pageX - floater.startPosX;
+            floater.groupId      = groupId;
+
+            var parentNode = tableNodes[groupId].parent.DOMelement;
+            if (!parentNode || parentNode.length < 1) {
+                parentNode = head;
+            };
+            floater.lowerBoundX = parentNode.offset().left + floater.mouseOffsetX;
+            floater.upperBoundX = parentNode.offset().left + parentNode.width() + floater.mouseOffsetX - width;
+
+            /** Create a placeholder where the cells before moved are **/
             var headerClass = selectors.th.replace('.','');
             var bodyClass = selectors.td.replace('.','');
             var placeholderHeader = $('<div>', {class: 'cm-drag-placeholder ' + headerClass, width: width});
@@ -236,14 +242,12 @@ function Colme(options) {
             });
 
             /** Sets initial position of the floater **/
-            var floater = $("#cm-floater");
-            floater.css('top', head.offset().top - $(document).scrollTop());
-            floater.css('left', floaterPos.startPosX - event.pageX);
+            floater.DOMelement.css('top', head.offset().top - $(document).scrollTop());
+            floater.DOMelement.css('left', -floater.mouseOffsetX);
 
             /** Copy cells of this col group into the floater **/
-            var floater     = $('#cm-floater');
-            var floaterHead = floater.find(selectors.head);
-            var floaterBody = floater.find(selectors.body);
+            var floaterHead = floater.DOMelement.find(selectors.head);
+            var floaterBody = floater.DOMelement.find(selectors.body);
             head.find(selectors.row).each(function () {
                 var thisRowCells = $(this).find('.' + groupId + ' ,[' + attributes.id + '=' + groupId + ']');
                 var newRow = $('<div>', {class: selectors.row.replace('.','')});
@@ -288,12 +292,12 @@ function Colme(options) {
      * Updates the position of the floater with 
      * the current position of the mouse. Restricts
      * the position of the floater to the limits of
-     * the col group (defined in floaterPos).
+     * the col group (defined in floater).
      *
      * @author lopis
      */
     function refreshFloater (event) {
-        var pos = event.pageX;
+        var pos = Math.max(Math.min(event.pageX, floater.upperBoundX), floater.lowerBoundX); 
         $('#cm-floater').css('transform', 'translateX('+pos+'px)');
     }
 
@@ -305,11 +309,10 @@ function Colme(options) {
      */
     function stopDrag () {
         
-        var floater     = $('#cm-floater');
-        var floaterHead = floater.find(selectors.head);
-        var floaterBody = floater.find(selectors.body);
+        var floaterHead = floater.DOMelement.find(selectors.head);
+        var floaterBody = floater.DOMelement.find(selectors.body);
         var placeHolder = $('.cm-drag-placeholder');
-        floater.css('left', -1000);
+        floater.DOMelement.css('left', -1000);
 
         /** Removes mouse binds **/
         $(window).unbind('mousemove');
@@ -329,7 +332,7 @@ function Colme(options) {
         $('.cm-drag-placeholder').remove();
 
         /** Clears the drag **/
-        floater.find(selectors.row).remove();
+        floater.DOMelement.find(selectors.row).remove();
 
         // Restore bind
         colme.draggable();
@@ -337,13 +340,52 @@ function Colme(options) {
 
     /**
      * When the floater moves, try to move the 
-     * columns around.
+     * columns around, changing the position of
+     * the placeholder.
      *
      * @author lopis
      */
     function refreshPlaceHolder (event) {
-        
+
+        var firstPlaceholder = table.find('.cm-drag-placeholder').first();
+        var offset           = firstPlaceholder.offset().left;
+        var prevSibling      = firstPlaceholder.prev();
+        var nextSibling      = firstPlaceholder.next();
+
+        // Position relative to element is (pageX-offset).
+        // Position is bound to the col group
+        var mouseX = Math.max(Math.min(event.pageX, floater.upperBoundX), floater.lowerBoundX) - floater.mouseOffsetX; 
+        if (mouseX >= offset + nextSibling.width() * 0.4) {
+            movePlaceholder(firstPlaceholder, true, nextSibling.attr(attributes.id));
+        } else if (mouseX <= offset - prevSibling.width() * 0.6) {
+            movePlaceholder(firstPlaceholder, false, prevSibling.attr(attributes.id));
+        } else {
+
+        }
     }
+
+    /**
+     * 
+     * @param boolean isForward True if the placeholder should move forward, false otherwise.
+     * @author lopis
+     */
+    function movePlaceholder (firstPlaceholder, isForward, siblingId) {
+        floater.DOMelement.find(selectors.row).each(function (rowIndex) {
+            var tableRow = table.find(selectors.row).eq(rowIndex);
+            var span = tableRow.find('.' + siblingId + ',[' + attributes.id + '=' + siblingId + ']').length;
+            if (isForward) {
+                tableRow.find('.cm-drag-placeholder').each(function () {
+                    $(this).siblings().addBack().eq($(this).index() + span).after($(this));
+                });
+            } else {
+                tableRow.find('.cm-drag-placeholder').each(function () {
+                    $(this).siblings().addBack().eq($(this).index() - span).before($(this));
+                });
+            }
+        });
+    }
+
+
 
     this.headerSticky = function() {
 
@@ -440,11 +482,11 @@ function Colme(options) {
 
     if (options.draggable) {
         // Create floater
-        var floater = $('<div>', {id: 'cm-floater'});
-        floater.append($('<div>', {class: selectors.head.replace('.','')}));
-        floater.append($('<div>', {class: selectors.body.replace('.','')}));
-        floater.css({position: 'fixed'})
-        $('body').append(floater);
+        floater.DOMelement = $('<div>', {id: 'cm-floater'});
+        floater.DOMelement.append($('<div>', {class: selectors.head.replace('.','')}));
+        floater.DOMelement.append($('<div>', {class: selectors.body.replace('.','')}));
+        floater.DOMelement.css({position: 'fixed'})
+        $('body').append(floater.DOMelement);
 
         // Sets dragging handlers
         this.draggable();
