@@ -210,15 +210,10 @@ function Colme(options) {
             $(selectors.th).unbind('mousedown');
 
             /** Initial position of the element in the page **/
-            var element = {
-                startPosX: $(this).offset().left - $(window).scrollLeft(),
-                startPosY: $(this).offset().top
-            };
-
-            floaterPos.startPosX = event.pageX - element.startPosX;
-            floaterPos.startPosY = event.pageY - element.startPosY;
-            floaterPos.lowerBoundX = element.startPosX;
-            floaterPos.lowerBoundY = element.startPosY;
+            floaterPos.startPosX   = $(this).offset().left;
+            floaterPos.startPosY   = $(this).offset().top;
+            //floaterPos.lowerBoundX = $(this).offset().left;
+            //floaterPos.lowerBoundY = $(this).offset().top;
 
 
             /** Width of this column (or column group) **/
@@ -243,7 +238,7 @@ function Colme(options) {
             /** Sets initial position of the floater **/
             var floater = $("#cm-floater");
             floater.css('top', head.offset().top - $(document).scrollTop());
-            floater.css('left', element.startPosX);
+            floater.css('left', floaterPos.startPosX - event.pageX);
 
             /** Copy cells of this col group into the floater **/
             var floater     = $('#cm-floater');
@@ -251,7 +246,6 @@ function Colme(options) {
             var floaterBody = floater.find(selectors.body);
             head.find(selectors.row).each(function () {
                 var thisRowCells = $(this).find('.' + groupId + ' ,[' + attributes.id + '=' + groupId + ']');
-                console.log(thisRowCells);
                 var newRow = $('<div>', {class: selectors.row.replace('.','')});
                 newRow.append(thisRowCells); // Moves cells to the new row in the floater
                 floaterHead.append(newRow);
@@ -262,6 +256,7 @@ function Colme(options) {
                 newRow.append(thisRowCells); // Moves cells to the new row in the floater
                 floaterBody.append(newRow);
             });
+            refreshFloater(event);
 
             /** Bind position of the floater to mouse movement **/
             $(window).mousemove(function(event) {
@@ -269,6 +264,10 @@ function Colme(options) {
                 refreshPlaceHolder(event);
             });
             $(window).mouseup(stopDrag);
+
+            // Because this is a drag event, it starts selecting text. So this disables it.
+            // Because this is a sow task, it's down in the end of this function.
+            $('*').css('user-select', 'none');
         });
     }
 
@@ -294,8 +293,8 @@ function Colme(options) {
      * @author lopis
      */
     function refreshFloater (event) {
-        var mousePos = event.pageX;
-        $('#cm-floater').css('left', mousePos - floaterPos.startPosX);
+        var pos = event.pageX;
+        $('#cm-floater').css('transform', 'translateX('+pos+'px)');
     }
 
     /**
@@ -385,7 +384,6 @@ function Colme(options) {
                         newChildId = 'cm-'+i+'-'+j+'-'+k ;
                         $(ths[j]).addClass(currParents[k].classes);
                         $(ths[j]).addClass(currParents[k].id);
-                        console.log(currParents[k].classes);
                         $(ths[j]).attr(attributes.id, newChildId);
                         
                         newChild = new Node( currParents[k], colspan, currentOffset, newChildId );
