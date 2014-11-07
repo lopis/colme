@@ -87,7 +87,7 @@ function Colme(options) {
         table.on('colme:hideColumn', function (event, groupId, value) {
 
             if (value) {
-                var elem  = $('.' + groupId);
+                var elem  = $('.' + groupId); 
                 if (!elem.is(':visible')) {
                     return;
                 }
@@ -96,10 +96,11 @@ function Colme(options) {
                 var width = elems.width();
                 var node  = tableNodes[groupId];
 
-                elem.hide();
-                elems.hide();
+                elem.hide();  // Hides self
+                elems.hide(); // Hides descendants
+                table.trigger('colme:hidden', elems.push(elem));
                 for (var parent = node.parent; parent; parent = parent.parent) {
-                    parent.DOMelement.width(parent.DOMelement.width() - width);
+                    parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
                 };
 
             } else {
@@ -107,19 +108,17 @@ function Colme(options) {
                 if (elem.is(':visible')) {
                     return;
                 }
-                $('.' + groupId).show();
+                var elems = $('.' + groupId);
+                elems.show(); // Shows descendants
                 var width = elem.width();
                 var node = tableNodes[groupId];
                 var parent = node.parent;
-                elem.show();
+                elem.show(); // Shows self
+                table.trigger('colme:shown', elems.push(elem));
                 for (; parent; parent = parent.parent) {
-                    if (parent.DOMelement.is(':visible')) {
-                        parent.DOMelement.width(parent.DOMelement.width() + width);
-                    } else if(parent.parent) {
-                        $('.' + parent.id).show();
-                    }
+                    /*  Updates its width and that of its descendants */
                     parent.DOMelement.show();
-                    parent.DOMelement.width(parent.setCellWidth());
+                    parent.setCellWidth();
                 };
 
             }
@@ -289,7 +288,6 @@ function Colme(options) {
             head.find(selectors.row).each(function () { // Then to the "children" in the header
                 afterLastOfType($(this), groupId, placeholderHeader.clone());
             });
-
             body.find(selectors.row).each(function () { // And in the children in the body
                 afterLastOfType($(this), groupId, placeholderBody.clone());
             });
@@ -453,6 +451,14 @@ function Colme(options) {
     }
 
 
+    /**
+     * Creates a tree representation of the table
+     * using the colspan values to establish relationships
+     * between columns.
+     *
+     * @author carlosmtx
+     * @author lopis
+     */
     this.createTree = function(){
         var root = new Node(undefined,colCount,0)
         var headerRows = head.find(selectors.row);
@@ -497,6 +503,8 @@ function Colme(options) {
         var tdCursor = 0;
         var rows = body.find(selectors.row);
         var tds = body.find(selectors.td);
+        /* Searches which 'parent' this cell belongs to by 
+         * using the values of the colspan */
         head.find(selectors.row).last().find(selectors.th).each(function () {
             var thNode = tableNodes[$(this).attr(attributes.id)];
             thCursor += thNode.colspan;
@@ -508,12 +516,14 @@ function Colme(options) {
             }
         });
 
+        /* Transverses the tree to collect its leaf nodes */
         var leafs=[];
         for ( i in tableNodes){
             if ( tableNodes[i].children.length == 0){
                 leafs.push(tableNodes[i]);
             }
         }
+        /* Connects the last row of the header (the 'leafs') to the first row of the body */
         var firstRow = body.find(selectors.row).first();
         for ( var i = 0 ; i < leafs.length ; i++){
             firstRow.find("." + leafs[i].id ).each(function(){
@@ -523,7 +533,7 @@ function Colme(options) {
             });
         }
             
-        // Sets the correct width of the headers
+        /* Sets the correct width of the headers */
         root.setCellWidth();
     }
 
@@ -565,6 +575,9 @@ function Colme(options) {
  * The tree never changes after performing an action
  * on the table. If changes occur, the tree must be
  * refreshed with this.updateTable().
+ *
+ * @author carlosmtx
+ * @author lopis
  */
 function Node (parent,colspan,colspanOffset,newId){
     this.parent         = parent;
@@ -590,16 +603,20 @@ function Node (parent,colspan,colspanOffset,newId){
         this.children.push(child);
     };
 
+    /**
+     * Visits all descendants and set its width equal
+     * to the sum of the width of its descendants
+     *
+     * @author lopis
+     */
     this.setCellWidth = function () {
         if (!this.children || this.children.length < 1) {
-            return this.DOMelement.width();
+            return this.DOMelement.is(':visible') ? this.DOMelement.width() : 0;
         } else {
             var width = 0;
             for (var i = 0; i < this.children.length; i++) {
                 width += this.children[i].setCellWidth();
             }
-            this.DOMelement.show();
-            $('.' + this.id).show();
             this.DOMelement.width(width);
             return width;
         }
