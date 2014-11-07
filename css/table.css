@@ -26,14 +26,6 @@
   background-position: right;
   text-align: center;
   text-overflow: ellipsis; }
-  .cm-th[data-cm-span="2"], .cm-td[data-cm-span="2"] {
-    width: 200px; }
-  .cm-th[data-cm-span="4"], .cm-td[data-cm-span="4"] {
-    width: 400px; }
-  .cm-th[data-cm-span="6"], .cm-td[data-cm-span="6"] {
-    width: 600px; }
-  .cm-th[data-cm-span="8"], .cm-td[data-cm-span="8"] {
-    width: 800px; }
 
 .cm-thead {
   color: whitesmoke; }
@@ -77,6 +69,15 @@
   height: 100%;
   width: 5px;
   background-color: #87A613; }
+
+#configs {
+  height: 80px;
+  width: 600px; }
+  #configs button {
+    opacity: 0.5;
+    width: 90px; }
+    #configs button.is-on {
+      opacity: 1.0; }
 
 .drag-place-holder {
   cursor: move; }

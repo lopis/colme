@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../vendor/jquery-ui.css">
 </head>
 <body>
+    <div id="configs"></div>
     <div id='cm-table'>
       <div class='cm-thead'>
         <div class='cm-tr'>
@@ -942,10 +943,22 @@
         var cm = new Colme(
             {
                 resizable: true,
-                draggable: true
+                draggable: true,
+                toggleable: true,
             }
         )
     });
+
+    $('.cm-th').each(function () {
+      var th = $(this);
+      var button = $('<button>', {'class': 'is-on', 'data-cm-id': $(this).attr('data-cm-id')});
+      button.append($(this).text());
+      button.click(function () {
+        $('#cm-table').trigger('colme:hideColumn', [th.attr('data-cm-id'), $(this).hasClass('is-on')]);
+        $(this).toggleClass('is-on');
+      })
+      $('#configs').append(button);
+    })
 </script>
 </body>
 </html>

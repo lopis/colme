@@ -83,7 +83,47 @@ function Colme(options) {
      * @param string colGroup Column group name
      * @param boolean visible True to show group, False otherwise
      */
-    this.setColumnVisible = function(colGroup, visible) {
+    this.toggleable = function() {
+        table.on('colme:hideColumn', function (event, groupId, value) {
+
+            if (value) {
+                var elem  = $('.' + groupId);
+                if (!elem.is(':visible')) {
+                    return;
+                }
+
+                var elems = $('[' + attributes.id + '=' + groupId + ']');
+                var width = elems.width();
+                var node  = tableNodes[groupId];
+
+                elem.hide();
+                elems.hide();
+                for (var parent = node.parent; parent; parent = parent.parent) {
+                    parent.DOMelement.width(parent.DOMelement.width() - width);
+                };
+
+            } else {
+                var elem = $('[' + attributes.id + '=' + groupId + ']');
+                if (elem.is(':visible')) {
+                    return;
+                }
+                $('.' + groupId).show();
+                var width = elem.width();
+                var node = tableNodes[groupId];
+                var parent = node.parent;
+                elem.show();
+                for (; parent; parent = parent.parent) {
+                    if (parent.DOMelement.is(':visible')) {
+                        parent.DOMelement.width(parent.DOMelement.width() + width);
+                    } else if(parent.parent) {
+                        $('.' + parent.id).show();
+                    }
+                    parent.DOMelement.show();
+                    parent.DOMelement.width(parent.setCellWidth());
+                };
+
+            }
+        })
 
     }
 
@@ -214,7 +254,10 @@ function Colme(options) {
 
         // Initialize handler for column dragging
         $(selectors.th).mousedown(function(event) {
-            if (event.target != this) {return}; // Prevents children from triggering this event
+
+            // Prevents children from triggering this event
+            // Only accepts left click to drag
+            if (event.target != this || event.which != 1) {return}; 
 
             //$(selectors.th).unbind('mousedown');
 
@@ -480,7 +523,8 @@ function Colme(options) {
             });
         }
             
-
+        // Sets the correct width of the headers
+        root.setCellWidth();
     }
 
     this.createTree();
@@ -508,6 +552,7 @@ function Colme(options) {
 
     if (options.toggleable) {
         // Sets toggling handlers
+        this.toggleable();
     };
 
 }
@@ -526,7 +571,7 @@ function Node (parent,colspan,colspanOffset,newId){
     this.children       = [];
     this.colspan        = colspan;
     this.colspanOffset  = colspanOffset; // Only used to build the tree
-    this.id             = !newId ? '' : newId;
+    this.id             = !newId ? 'cm-root' : newId;
     this.classes        = '';
     this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
 
@@ -544,5 +589,20 @@ function Node (parent,colspan,colspanOffset,newId){
     this.addChild = function(child){
         this.children.push(child);
     };
+
+    this.setCellWidth = function () {
+        if (!this.children || this.children.length < 1) {
+            return this.DOMelement.width();
+        } else {
+            var width = 0;
+            for (var i = 0; i < this.children.length; i++) {
+                width += this.children[i].setCellWidth();
+            }
+            this.DOMelement.show();
+            $('.' + this.id).show();
+            this.DOMelement.width(width);
+            return width;
+        }
+    }
 }
 
