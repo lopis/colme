@@ -35,6 +35,8 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
 }
 .cm-thead {
   color: whitesmoke;
+  background-color: white;
+  z-index: 2;
   .cm-th {
     background-color: indianred;
   }

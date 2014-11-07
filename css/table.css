@@ -28,7 +28,9 @@
   text-overflow: ellipsis; }
 
 .cm-thead {
-  color: whitesmoke; }
+  color: whitesmoke;
+  background-color: white;
+  z-index: 2; }
   .cm-thead .cm-th {
     background-color: indianred; }
   .cm-thead .cm-tr:nth-child(odd) .cm-th {

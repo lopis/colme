@@ -439,7 +439,16 @@ function Colme(options) {
 
 
     this.headerSticky = function() {
-
+        var container = $(window);
+        container.scroll(function (event) {
+            var scrollTop = container.scrollTop();
+            var offsetTop = table.offset().top;
+            if (scrollTop > offsetTop) {
+                head.css('transform', 'translateY('+(scrollTop-offsetTop)+'px)');
+            } else {
+                head.css('transform', 'translateY(0px)');
+            }
+        })
     }
 
     this.columnsToggleable = function(element) {
@@ -558,6 +567,7 @@ function Colme(options) {
 
     if (options.sticky) {
         // Sets scroll handlers to control table header
+        this.headerSticky();
     };
 
     if (options.toggleable) {
