@@ -1,173 +1,61 @@
 
-# Table of Contents
+Tables are often a headache to use. They're also a pain to code and manipulate. Colme.js was born out of the need to interact with large tables in a meaningful and friendly way. This plugin wraps a bunch of cool table features that can be applied to div based tables (not table based tables). 
 
-- [API](#api)
-  - [colme(table, options)](#colmetable-options)
-  - [saveCurrentLayout(name [, extra] )](#saveCurrentLayout)
-  - [getLayouts()](#getlayouts)
-  - [set_resizable()](#value)
-  - [set_draggable()](#value)
-  - [set_header_sticky()](#value)
-  - [set_columns_toggleable()](#value)
-- [Events](#events)
-  - ['colme:col:hide'](#colmecolhide)
-  - ['colme:col:show'](#colmecolshow)
-  - ['colme:col:resize'](#colmecolresize)
+There's always a debate over which approach is the best: using tables or using divs. There's really no need to replace tables with divs if all you want is to display tabular data - that's why they exist. But as soon as you need to make more complex manipulations, the problems grow. While developing this plugin, we tried divs and tables, and came up with the following summary of the pros and cons. TL;DR, divs won.
 
+https://docs.google.com/document/d/1AqeYFpDNVKWpyqyL2ihqFFyYoLYe4CpxAFTqpa2m2-Q/edit
+
+The following features are available in colme:
+**Toggling columns**: hiding or showing a column, or a whole group of columns if colspans are present;
+**Resizing columns**: makes use of the jQueryUI resize plugin to resize columns or columns groups;
+**Dragging columns**: drag the header of a column or of a column group to drag it;
+**Sticky header**: For big tables or tables inside small containers, it may be useful to make the header sticky;
+**Feature selection**: developers can select which features to activate (toggling, resizing, etc);
+**Layout management**: Work in progress. Allows one to save the current table layout in JSON/JS format, useful if one needs to save user preferences;
 
 
-API
-===========================
+* * *
 
-## colme(table, options)
-Applies [colme] to 'table'.
-
-### Params:
-#### table:
-ould be a div-based html table (e.g. as returned by ``$('#table')`` )
-An example of a table with valid markup :
+## Class: Colme
 
 
-    <div class='cm-table'>
-      <div class='cm-thead'>
-        <div class='cm-tr'>
-          <div class='cm-th' data-cm-group='id' data-cm-span='1'></div>
-          <div class='cm-th' data-cm-group='sales' data-cm-span='2'></div>
-        </div>
-        <div class='cm-tr'>
-          <div class='cm-th' data-cm-group='id' data-cm-id='id'></div>
-          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2013'></div>
-          <div class='cm-th' data-cm-group='sales' data-cm-id='sales2014'></div>
-        </div>
-      </div>
-      <div class='cm-tbody'>
-        <div class='cm-tr'>
-          <div class='cm-td' data-cm-group='id' data-cm-id='id'></div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'></div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'></div>
-        </div>
-        <div class='cm-tr'>
-          <div class='cm-td' data-cm-group='id' data-cm-id='id'></div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2013'></div>
-          <div class='cm-td' data-cm-group='sales' data-cm-id='sales2014'></div>
-        </div>
-      </div>
-    </div>
-
-#### options:
-An object containing some key-value pairs. Some are mandatory and some have default values.
-Options: table-class, head-class, body-class, row-class, th-class, td-class, col-id-attr, col-group-att, resizable, draggable, sticky, toggleable, 
-#### table-class:
-The class of the div representing the table. Must be root of 'table'.
-Optional field, since it defaults to the class of the root element of 'table'.
-
-#### head-class:
-The class of the div representing the table header.
-Defaults to 'cm-thead'.
-
-#### body-class:
-The class of the div representing the table body.
-Defaults to 'cm-tbody'.
-
-#### row-class:
-The class of the div representing the table row.
-Defaults to 'cm-tr'.
-
-#### th-class:
-The class of the div representing the header cell.
-Defaults to 'cm-th'.
-
-#### td-class:
-The class of the div representing the body cell.
-Defaults to 'cm-td'.
-
-#### col-id-attr:
-The attribute in the cells that identifies a column. Defaults to 'data-cm-id'.
-
-#### col-group-attr:
-The attribute in the cells that identifies a column group.
-Defaults to 'data-cm-group'.
-
-#### resizable:
-Set to 'true' to enable resizable columns.
-Defaults to false.
-
-#### draggable:
-Set to 'true' to enable dragging columns.
-Defaults to false.
-
-#### sticky:
-Set to 'true' to enable sticky header, i.e. the header stays visible when the page overscrolls; the header scrolls with the table if its top or bottom is visible.
-
-#### toggleable:
-Accepts a class name of the elements that should trigger the hiding and showing of tables.
-
-## <a name='saveCurrentLayout'></a> saveCurrentLayout(name [, extra] )
-Saves the current layout of the table, including each column width, column visibility and column order.
-If the name already exists, overwrite the existing layout.
-### Params:
-#### name:
-The name of the view to be saved or the name of an existing view to overwrite.
-#### extra:
-An object containing extra fields that might be useful to attach to this view.
-E.g.: ``{'layoutClass': 'compressed-table', 'createdBy': 'john'}``
-
-## getLayouts()
-Use this to save your layouts in a database for instance.
-Returns an array containing object representations of all layouts, e.g.:
-
-    [{
-      name: 'my view',
-      col-widths: {
-        'id': 100,
-        'sales2013': 13,
-        'sales2014': 15
-      },
-      col-visibility: {
-        'id': false,
-        'sales': true
-      },
-      col-order: [
-        'id', 'sales'
-      ],
-      options: {
-        'layoutClass': 'compressed-table',
-        'createdBy': 'john'
-      }
-    }]
-
-## set_resizable( [value] )
-## set_draggable( [value] )
-## set_header_sticky( [value] )
-## set_columns_toggleable( [value] )
-Use these to manually enable or disable each feature on the table.
-### Parameters
-#### value
-Set to true to enable the feature or false to disable it.
-Defaults to true.
-
-Events
-===========================
-
-## 'colme:col:hide'
-Event triggered on the table after a column has been hidden
-### Parameters:
-#### col-group
-The column group that was hidden
-
-## 'colme:col:show'
-Event triggered on the table after a column has been shown
-### Parameters:
-#### col-group
-The name of the column group that was shown
-
-## 'colme:col:resize'
-Triggered after a column finished resizing and style updated.
-### Parameters:
-#### col-id:
-The id column of the column 
+### Colme.toggleable()
+Enables hiding and showing groups of columns.
+To trigger a column toggle, trigger 'colme:hideColumn' event on the table.()
 
 
-save_current_layout(table, view_name)
-set_current_view(table, view_name)
-remove_view(table, view_name)
+### Colme.resizable()
+Makes columns resizable
+
+
+### Colme.draggable()
+Enables dragging columns or column groups. Columns can be dragged within their group.() 
+
+
+### Colme.headerSticky(container)
+Makes the header sticky when the container scrolls past the top.(container) 
+
+
+
+**Parameters**
+
+**container**: `Object`, An object, typically as returned by '$(window)', that is being scrolled on.
+
+
+### Colme.updateTable()
+When the table structure has been manually changed, such as when lines or columns
+have been inserted or removed, the table tree must be updated, or [colme] won't behave correctly.() 
+
+
+
+
+### Colme.doYouBelieveInMiracles(lots_of)
+
+Makes miracles.
+
+**Parameters**
+
+**lots_of**: `Hapiness`, The stuff dreams are made of.
+
+
+* * *
