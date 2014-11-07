@@ -1,6 +1,7 @@
 #cm-table {
   white-space: nowrap;
-  display: inline-block; }
+  display: inline-block;
+  font-family: sans-serif; }
 
 #cm-floater {
   z-index: 91;
@@ -30,18 +31,19 @@
 .cm-thead {
   color: whitesmoke;
   background-color: white;
-  z-index: 2; }
+  z-index: 2;
+  transform: translateZ(0); }
   .cm-thead .cm-th {
     background-color: indianred; }
   .cm-thead .cm-tr:nth-child(odd) .cm-th {
-    opacity: 0.9; }
+    background-color: #C13B3B; }
 
 .cm-tbody {
   color: #454545; }
   .cm-tbody .cm-td {
     background-color: #E3C2FF; }
   .cm-tbody .cm-tr:nth-child(odd) .cm-td {
-    opacity: 0.7; }
+    background-color: #CDA9EC; }
 
 .ui-resizable-helper {
   height: 1000px;

@@ -4,6 +4,7 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
 #cm-table {
   white-space: nowrap;
   display: inline-block;
+  font-family: sans-serif;
 }
 
 #cm-floater {
@@ -37,11 +38,12 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
   color: whitesmoke;
   background-color: white;
   z-index: 2;
+  transform: translateZ(0);
   .cm-th {
     background-color: indianred;
   }
   .cm-tr:nth-child(odd) .cm-th {
-    opacity: 0.9;
+    background-color: #C13B3B;
   }
 }
 .cm-tbody {
@@ -50,7 +52,7 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
     background-color: #E3C2FF;
   }
   .cm-tr:nth-child(odd) .cm-td {
-    opacity: 0.7;
+    background-color: #CDA9EC;
   }
 }
 .ui-resizable-helper{

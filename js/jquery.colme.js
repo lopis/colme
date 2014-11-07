@@ -123,11 +123,6 @@ function Colme(options) {
 
             }
         })
-
-    }
-
-    this.isColumnVisible = function (colGroup) {
-
     }
 
     this.saveCurrentLayout = function() {
@@ -248,7 +243,10 @@ function Colme(options) {
     }
 
 
-
+    /**
+     * Enables dragging columns or column groups.
+     * Columns can be dragged within their group.
+     */
     this.draggable = function() {
 
         // Initialize handler for column dragging
@@ -384,9 +382,6 @@ function Colme(options) {
 
         /** Clears the drag **/
         floater.DOMelement.find(selectors.row).remove();
-
-        // Restore bind
-        //colme.draggable();
     }
 
     /**
@@ -436,10 +431,11 @@ function Colme(options) {
         });
     }
 
-
-
-    this.headerSticky = function() {
-        var container = $(window);
+    /**
+     * Makes the header sticky when the container scrolls
+     * past the top.
+     */
+    this.headerSticky = function(container) {
         container.scroll(function (event) {
             var scrollTop = container.scrollTop();
             var offsetTop = table.offset().top;
@@ -451,12 +447,19 @@ function Colme(options) {
         })
     }
 
-    this.columnsToggleable = function(element) {
-
-    }
-
+    /**
+     * When the table structure has been manually changed, such as when lines or columns
+     * have been inserted or removed, the table tree must be updated, or [colme] won't
+     * behave correctly.
+     *
+     * @author lopis
+     */
     this.updateTable = function () {
         // Refreshed the table tree representation.
+        for (var i = 0; i < tableNodes.length; i++) {
+            delete tableNodes[i];
+        };
+        this.createTree();
     }
 
 
@@ -548,30 +551,29 @@ function Colme(options) {
 
     this.createTree();
 
+    /* Inits jquery plugin and sets handlers for resizing */
     if (options.resizable) {
-        // Inits jquery plugin and Sets handlers for resizing
         this.resizable();
     };
 
+    /* Creates floater and sets dragging handlers */
     if (options.draggable) {
-        // Create floater
         floater.DOMelement = $('<div>', {id: 'cm-floater'});
         floater.DOMelement.append($('<div>', {class: selectors.head.replace('.','')}));
         floater.DOMelement.append($('<div>', {class: selectors.body.replace('.','')}));
         floater.DOMelement.css({position: 'fixed'})
         $('body').append(floater.DOMelement);
 
-        // Sets dragging handlers
         this.draggable();
     };
 
+    /* Sets scroll handlers to control table header */
     if (options.sticky) {
-        // Sets scroll handlers to control table header
-        this.headerSticky();
+        this.headerSticky(options.sticky);
     };
 
+    /* Sets toggling handlers */
     if (options.toggleable) {
-        // Sets toggling handlers
         this.toggleable();
     };
 
