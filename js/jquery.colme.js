@@ -121,6 +121,9 @@ function Colme(options) {
     this.resizable = function() {
         var cm = this;
         var colIds = head.find(selectors.th + '[' + attributes.id + ']');
+
+        $('<style>.ui-resizable-helper::after{height: '+table.height()+'px;}</style>').appendTo('head');
+
         $(colIds).each(function () {
             $(this).resizable({
                 handles  : 'e',
@@ -128,6 +131,7 @@ function Colme(options) {
                 helper   : 'ui-resizable-helper',
                 start    : function (event, ui) {
                     $(ui.helper).height(ui.originalSize.height);
+                    $(ui.helper).css('top', table.offset().top);
                 },
                 stop     : function(event, ui) {
                     var initialWidth    = ui.originalSize.width;

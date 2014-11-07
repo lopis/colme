@@ -31,6 +31,7 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
   background-repeat: repeat-y;
   background-position: right;
   text-align: center;
+  text-overflow: ellipsis;
 
   &[data-cm-span="2"] {
       width: 200px;
@@ -40,6 +41,9 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
   }
   &[data-cm-span="6"] {
       width: 600px;
+  }
+  &[data-cm-span="8"] {
+      width: 800px;
   }
 }
 .cm-thead {
@@ -62,8 +66,18 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
 }
 .ui-resizable-helper{
   height: 1000px;
-  border-right: 2px solid black;
   width: 5px;
+  overflow: visible !important;
+  &::after {
+    z-index: 49 !important;
+    border-right: 3px solid #FF0020;
+    opacity: 0.5;
+    position: absolute;
+    right: 0px;
+    content: attr(data-filler);
+    width: 1px;
+    display: inline-block;
+  }
 }
 .ui-resizable-handle{
   width: 10px !important;

@@ -24,13 +24,16 @@
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAATAAAAEwEOyCcDAAAAB3RJTUUH3goOEBUjx3uMewAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=);
   background-repeat: repeat-y;
   background-position: right;
-  text-align: center; }
+  text-align: center;
+  text-overflow: ellipsis; }
   .cm-th[data-cm-span="2"], .cm-td[data-cm-span="2"] {
     width: 200px; }
   .cm-th[data-cm-span="4"], .cm-td[data-cm-span="4"] {
     width: 400px; }
   .cm-th[data-cm-span="6"], .cm-td[data-cm-span="6"] {
     width: 600px; }
+  .cm-th[data-cm-span="8"], .cm-td[data-cm-span="8"] {
+    width: 800px; }
 
 .cm-thead {
   color: whitesmoke; }
@@ -48,8 +51,17 @@
 
 .ui-resizable-helper {
   height: 1000px;
-  border-right: 2px solid black;
-  width: 5px; }
+  width: 5px;
+  overflow: visible !important; }
+  .ui-resizable-helper::after {
+    z-index: 49 !important;
+    border-right: 3px solid #FF0020;
+    opacity: 0.5;
+    position: absolute;
+    right: 0px;
+    content: attr(data-filler);
+    width: 1px;
+    display: inline-block; }
 
 .ui-resizable-handle {
   width: 10px !important;
