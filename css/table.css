@@ -1,5 +1,6 @@
 #cm-table {
-  white-space: nowrap; }
+  white-space: nowrap;
+  display: inline-block; }
 
 #cm-floater {
   z-index: 91;
@@ -19,7 +20,11 @@
   line-height: 30px;
   overflow: hidden;
   text-oveflow: ellipsis;
-  width: 100px; }
+  width: 100px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAATAAAAEwEOyCcDAAAAB3RJTUUH3goOEBUjx3uMewAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=);
+  background-repeat: repeat-y;
+  background-position: right;
+  text-align: center; }
   .cm-th[data-cm-span="2"], .cm-td[data-cm-span="2"] {
     width: 200px; }
   .cm-th[data-cm-span="4"], .cm-td[data-cm-span="4"] {
@@ -27,13 +32,19 @@
   .cm-th[data-cm-span="6"], .cm-td[data-cm-span="6"] {
     width: 600px; }
 
-.cm-th:nth-child(even), .cm-td:nth-child(even) {
-  background-color: indianred;
-  color: white; }
+.cm-thead {
+  color: whitesmoke; }
+  .cm-thead .cm-th {
+    background-color: indianred; }
+  .cm-thead .cm-tr:nth-child(odd) .cm-th {
+    opacity: 0.9; }
 
-.cm-th:nth-child(odd), .cm-td:nth-child(even) {
-  background-color: whitesmoke;
-  color: black; }
+.cm-tbody {
+  color: #454545; }
+  .cm-tbody .cm-td {
+    background-color: #E3C2FF; }
+  .cm-tbody .cm-tr:nth-child(odd) .cm-td {
+    opacity: 0.7; }
 
 .ui-resizable-helper {
   height: 1000px;
@@ -41,8 +52,19 @@
   width: 5px; }
 
 .ui-resizable-handle {
-  width: 15px !important;
-  background-color: magenta; }
+  width: 10px !important;
+  background-color: lightsalmon;
+  opacity: 0.5; }
+  .ui-resizable-handle:hover {
+    width: 15px !important; }
+
+.dragger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 5px;
+  background-color: #87A613; }
 
 .drag-place-holder {
   cursor: move; }

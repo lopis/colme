@@ -197,6 +197,10 @@ function Colme(options) {
                     }
                 }
             });
+
+            $(this).on('resizestart', function (e) {
+                e.stopPropagation();
+            });
         });
     }
 
@@ -206,7 +210,9 @@ function Colme(options) {
 
         // Initialize handler for column dragging
         $(selectors.th).mousedown(function(event) {
-            $(selectors.th).unbind('mousedown');
+            if (event.target != this) {return}; // Prevents children from triggering this event
+
+            //$(selectors.th).unbind('mousedown');
 
             /** Width of this column (or column group) **/
             var width = $(this).width();
@@ -335,7 +341,7 @@ function Colme(options) {
         floater.DOMelement.find(selectors.row).remove();
 
         // Restore bind
-        colme.draggable();
+        //colme.draggable();
     }
 
     /**
