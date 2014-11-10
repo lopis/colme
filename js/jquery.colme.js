@@ -92,8 +92,8 @@ function Colme(options) {
                 var width = elems.width();
                 var node  = tableNodes[groupId];
 
-                elem.hide();  // Hides self
-                elems.hide(); // Hides descendants
+                elem.addClass('cm-hidden');  // Hides self
+                elems.addClass('cm-hidden'); // Hides descendants
                 table.trigger('colme:hidden', elems.push(elem));
                 for (var parent = node.parent; parent; parent = parent.parent) {
                     parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
@@ -105,15 +105,15 @@ function Colme(options) {
                     return;
                 }
                 var elems = $('.' + groupId);
-                elems.show(); // Shows descendants
+                elems.removeClass('cm-hidden'); // Shows descendants
                 var width = elem.width();
                 var node = tableNodes[groupId];
                 var parent = node.parent;
-                elem.show(); // Shows self
+                elem.removeClass('cm-hidden'); // Shows self
                 table.trigger('colme:shown', elems.push(elem));
                 for (; parent; parent = parent.parent) {
                     /*  Updates its width and that of its descendants */
-                    parent.DOMelement.show();
+                    parent.DOMelement.removeClass('cm-hidden');
                     parent.setCellWidth();
                 };
 
@@ -149,11 +149,14 @@ function Colme(options) {
             currNode.children = newChildren;
         }
 
-        applyOrderAndWidth(layout);
+        applyOrderWidthAndVisibility(layout);
 
     }
 
-    function applyOrderAndWidth (layout) {
+    /** 
+     * Applies order, width and visibility
+     */
+    function applyOrderWidthAndVisibility (layout) {
         var stack = [{node :root , index :0}];
 
         do{
@@ -163,7 +166,9 @@ function Colme(options) {
                 $('.' + current.node.parent.id).each(function () {
                     /* Appends node to own row */
                     $(this).parent().append($(this));
-                }).width(layout[current.node.id].width); /* Apply width to itself */
+                    $(this).removeClass('cm-hidden');
+                }).width(layout[current.node.id].width).addClass(!layout[current.node.id].visible ? 'cm-hidden' : ''); /* Apply width and visibility to itself */
+
                 
                 stack.pop();
                 continue; // because there are not more children
@@ -181,6 +186,10 @@ function Colme(options) {
 
                 /* Apply width to itself */
                 current.node.DOMelement.width(layout[current.node.id].width);
+
+                /* Set visiblity */
+                current.node.DOMelement.removeClass('cm-hidden');
+                current.node.DOMelement.addClass(!layout[current.node.id].visible? 'cm-hidden' : '')
             };
 
             stack.push({node: current.node.children[current.index++], index : 0});
@@ -418,7 +427,6 @@ function Colme(options) {
         var rowToUpdate = placeHolder.first().parents(selectors.row);
         floater.DOMelement.css('left', -1000);
 
-
         /** Removes mouse binds **/
         $(window).unbind('mousemove');
         $(window).unbind('mouseup');
@@ -435,7 +443,6 @@ function Colme(options) {
 
         /* Apply current column order in the tree */
         var newChildren = [];
-        console.log(tableNodes[floater.groupId].parent.children);
         rowToUpdate.find('.' + tableNodes[floater.groupId].parent.id).each(function () {
             newChildren.push($(this).attr(attributes.id));
         });
@@ -443,14 +450,12 @@ function Colme(options) {
         tableNodes[floater.groupId].parent.children.sort(function (arg1, arg2) {
             return newChildren.indexOf(arg1.id) -  newChildren.indexOf(arg2.id);
         });
-        console.log(tableNodes[floater.groupId].parent.children);
 
         /** Removes the placeholder **/
         $('.cm-drag-placeholder').remove();
 
         /** Clears the drag **/
         floater.DOMelement.find(selectors.row).remove();
-
     }
 
     /**
@@ -721,7 +726,8 @@ function Colme(options) {
                 colspan  : this.colspan,
                 id       : this.id,
                 width    : this.DOMelement.width(),
-                children : []
+                children : [],
+                visible  : !this.DOMelement.hasClass('cm-hidden'),
           } 
           for ( i in this.children ){
             obj.children.push( this.children[i].toObject() )
