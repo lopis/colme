@@ -547,7 +547,6 @@ function Colme(options) {
             
         /* Sets the correct width of the headers */
         root.setCellWidth();    
-        window.root = root;
 
        // console.log(JSON.stringify(root));
     }
