@@ -546,7 +546,10 @@ function Colme(options) {
         }
             
         /* Sets the correct width of the headers */
-        root.setCellWidth();
+        root.setCellWidth();    
+        window.root = root;
+
+       // console.log(JSON.stringify(root));
     }
 
     this.createTree();
@@ -592,19 +595,6 @@ function Colme(options) {
  * @author lopis
  */
 function Node (parent,colspan,colspanOffset,newId){
-    this.parent         = parent;
-    this.children       = [];
-    this.colspan        = colspan;
-    this.colspanOffset  = colspanOffset; // Only used to build the tree
-    this.id             = !newId ? 'cm-root' : newId;
-    this.classes        = '';
-    this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
-
-
-    //This Elements exist to help the tree traversing when resizing
-    //-------------------------------------------------
-    this.resizeAcumulator = 0; 
-    this.resizeAmount = 0;
 
 
     if (this.parent) {
@@ -633,5 +623,32 @@ function Node (parent,colspan,colspanOffset,newId){
             return width;
         }
     }
+
+    this.toJSON = function() {
+      return {
+            colspan : this.colspan,
+            colspanOffset : this.colspanOffset,
+            id : this.id,
+            classes : this.classes,
+            children : this.children
+      }  
+    }
+
+    this.toObject = function(){
+        this.toJSON();
+    }
+
+    this.parent         = parent;
+    this.children       = [];
+    this.colspan        = colspan;
+    this.colspanOffset  = colspanOffset; // Only used to build the tree
+    this.id             = !newId ? 'cm-root' : newId;
+    this.classes        = '';
+    this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
+
+    //This Elements exist to help the tree traversing when resizing
+    //-------------------------------------------------
+    this.resizeAcumulator = 0; 
+    this.resizeAmount = 0;
 }
 
