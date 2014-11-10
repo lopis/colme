@@ -6,6 +6,8 @@
  * @moto: é um plugin e vai ficar awesome
  * @moto2: o que é que nós não fazemos? nada.
  *
+ * @class Colme
+ *
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -78,10 +80,9 @@ function Colme(options) {
 
 
     /**
-     * Enables hinding and showing groups of columns.
-     *
-     * @param string colGroup Column group name
-     * @param boolean visible True to show group, False otherwise
+     * @method toggleable
+     * Enables hiding and showing groups of columns.
+     * To trigger a column toggle, trigger 'colme:hideColumn' event on the table.
      */
     this.toggleable = function() {
         table.on('colme:hideColumn', function (event, groupId, value) {
@@ -141,13 +142,14 @@ function Colme(options) {
      * Makes miracles.
      *
      * @author Your Heart
-     * @param Hapiness
+     * @param {Hapiness} lots_of - The stuff dreams are made of.
      */
     this.doYouBelieveInMiracles = function(){
         return "Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!"
     }
 
     /**
+     * @method resizable
      * Makes columns resizable
      * @author lopis
      * @author carlosmtx
@@ -244,8 +246,8 @@ function Colme(options) {
 
 
     /**
-     * Enables dragging columns or column groups.
-     * Columns can be dragged within their group.
+     * @method draggable
+     * Enables dragging columns or column groups. Columns can be dragged within their group.
      */
     this.draggable = function() {
 
@@ -325,9 +327,11 @@ function Colme(options) {
     }
 
     /**
-     * Utility function to add 'afterElement' after the
-     * last found element with a given class 'groupId'
+     * Utility function to add 'afterElement' after the last found element with a given class 'groupId'
      *
+     * @param {Object} element - The element where it will be inserted.
+     * @param {String} groupId - The id.
+     * @param {Object} afterElement - The element being inserted into 'element'.
      * @author lopis
      */
     function afterLastOfType (element, groupId, afterElement) {
@@ -338,15 +342,14 @@ function Colme(options) {
     }
 
     /** 
-     * Updates the position of the floater with 
-     * the current position of the mouse. Restricts
-     * the position of the floater to the limits of
-     * the col group (defined in floater).
+     * Updates the position of the floater with the current position of the mouse. Restricts
+     * the position of the floater to the limits of the col group (defined in floater).
      *
+     * @param {Event} e - The mouse move event.
      * @author lopis
      */
-    function refreshFloater (event) {
-        var pos = Math.max(Math.min(event.pageX, floater.upperBoundX), floater.lowerBoundX); 
+    function refreshFloater (e) {
+        var pos = Math.max(Math.min(e.pageX, floater.upperBoundX), floater.lowerBoundX); 
         $('#cm-floater').css('transform', 'translateX('+pos+'px)');
     }
 
@@ -385,6 +388,7 @@ function Colme(options) {
     }
 
     /**
+     * @method refreshPlaceHolder
      * When the floater moves, try to move the 
      * columns around, changing the position of
      * the placeholder.
@@ -411,8 +415,8 @@ function Colme(options) {
     }
 
     /**
-     * 
-     * @param boolean isForward True if the placeholder should move forward, false otherwise.
+     * When the floater moves beyond a certain point, the placeholder jumps forward or backward.
+     * @param {Boolean} isForward - True if the placeholder should move forward, false otherwise.
      * @author lopis
      */
     function movePlaceholder (firstPlaceholder, isForward, siblingId) {
@@ -432,8 +436,10 @@ function Colme(options) {
     }
 
     /**
-     * Makes the header sticky when the container scrolls
-     * past the top.
+     * @method headerSticky
+     * Makes the header sticky when the container scrolls past the top.
+     *
+     * @param {Object} container - An object, typically as returned by '$(window)', that is being scrolled on.
      */
     this.headerSticky = function(container) {
         container.scroll(function (event) {
@@ -448,9 +454,9 @@ function Colme(options) {
     }
 
     /**
+     * @method updateTable
      * When the table structure has been manually changed, such as when lines or columns
-     * have been inserted or removed, the table tree must be updated, or [colme] won't
-     * behave correctly.
+     * have been inserted or removed, the table tree must be updated, or [colme] won't behave correctly.
      *
      * @author lopis
      */
@@ -464,9 +470,8 @@ function Colme(options) {
 
 
     /**
-     * Creates a tree representation of the table
-     * using the colspan values to establish relationships
-     * between columns.
+     * Creates a tree representation of the table using the colspan values to
+     * establish relationships between columns.
      *
      * @author carlosmtx
      * @author lopis
@@ -580,13 +585,15 @@ function Colme(options) {
 }
 
 /**
- * The structure that defines the table is represented
- * internally by a tree, composed of Nodes.
- * The tree can be transversed in both directions to
- * allow propagation of actions up and down.
- * The tree never changes after performing an action
- * on the table. If changes occur, the tree must be
+ * The structure that defines the table is represented internally by a tree, composed of Nodes.
+ * The tree can be transversed in both directions to allow propagation of actions up and down.
+ * The tree never changes after performing an action on the table. If changes occur, the tree must be
  * refreshed with this.updateTable().
+ *
+ * @param {Node} parent - The direct ancestor
+ * @param {int} colspan - Colspan of this cell
+ * @param {int} colspanOffset - Sum of colspans before this cell
+ * @param {String} newId - And ID for this cell
  *
  * @author carlosmtx
  * @author lopis
