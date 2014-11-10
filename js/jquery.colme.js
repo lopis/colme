@@ -31,18 +31,12 @@
 function Colme(options) {
 
     /**
-     * Table layouts are objects that describe the layout
-     * of the table, including column widths and order.
-     */
-    layouts = {};
-
-    /**
      * Each table node is kept in this object, accessible
      * with the Id of the node (selectors.span)
      */
-    tableNodes = {};
+    var tableNodes = {};
 
-    floater = {};
+    var floater = {};
 
     if (!options.selectors) {
         options.selectors = {};
@@ -65,11 +59,12 @@ function Colme(options) {
     };
 
 
-   table    = $(selectors.table);
-   head     = table.find(selectors.head);
-   body     = table.find(selectors.body);
-   colCount = 0;
-   colme    = this;
+   var table    = $(selectors.table);
+   var head     = table.find(selectors.head);
+   var body     = table.find(selectors.body);
+   var colCount = 0;
+   var colme    = this;
+   var root ;
 
    head.find(selectors.row).first().find(selectors.th).each(function () {
        var c = parseInt($(this).attr(attributes.span));
@@ -125,15 +120,46 @@ function Colme(options) {
         })
     }
 
-    this.saveCurrentLayout = function() {
-
+    this.getLayout = function() {
+        var layout = {}
+        for ( i in tableNodes ){
+            layout[i] = tableNodes[i].toObject();
+        }
+        return layout;
     }
 
-    this.getLayouts = function() {
+    this.setLayout = function( layout ) {
+        if ( typeof layout === layout){
+            layout = JSON.parse(layout);
+        }
+        var currNode;
+        for ( i in layout ){
+            currNode = tableNodes[layout[i].id];
+            //currNode.width = layout[i].width;
+            var aux={};
+            
+            for ( k in currNode.children  ){
+                aux[ currNode.children[k].id ] = currNode.children[k];
+            }
+            
+            var newChildren =[];
 
-    }
+            for ( k in layout[i].children ){
+                newChildren.push( aux[ layout[i].children[k].id] )
+            }
 
-    this.setLayout = function() {
+            currNode.children = newChildren;
+        }
+
+        for( i in layout){
+            tableNodes[ layout[i].id ].DOMelement.width( layout[i].width );
+        }
+        for ( i in tableNodes ){
+            if ( tableNodes[i].children.length === 0){
+                var id = tableNodes[i].parent.DOMelement.attr(attributes.id);
+                body.find( "." + id ).width( tableNodes[i].DOMelement.width() ); 
+            }
+        }
 
     }
 
@@ -177,13 +203,13 @@ function Colme(options) {
                     var element = $(ui.element.context);
                     var span    = element.attr(attributes.span);
                     
-                    var rootNode = tableNodes[element.attr(attributes.id)]
-                    rootNode.DOMelement.width(initialWidth)
-                    rootNode.resizeAcumulator =0;
-                    rootNode.resizeAmount = absDelta;
+                    var resizeRootNode = tableNodes[element.attr(attributes.id)]
+                    resizeRootNode.DOMelement.width(initialWidth)
+                    resizeRootNode.resizeAcumulator =0;
+                    resizeRootNode.resizeAmount = absDelta;
 
-                    var stack = [ {iterated : false , node : rootNode } ];
-                    var childrenNodes =[{iterated : false , node : rootNode }];
+                    var stack = [ {iterated : false , node : resizeRootNode } ];
+                    var childrenNodes =[{iterated : false , node : resizeRootNode }];
                     var leafNodes = [];
                     var lost =0;
                     // Traversing the tree 
@@ -230,8 +256,8 @@ function Colme(options) {
                     }
 
                     // Applying possible width to all parent nodes
-                    for(ancestor = rootNode.parent; ancestor ; ancestor = ancestor.parent) {
-                        ancestor.DOMelement.width( ancestor.DOMelement.width() + rootNode.resizeAcumulator * sign );
+                    for(ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
+                        ancestor.DOMelement.width( ancestor.DOMelement.width() + resizeRootNode.resizeAcumulator * sign );
                     }
                 }
             });
@@ -472,7 +498,7 @@ function Colme(options) {
      * @author lopis
      */
     this.createTree = function(){
-        var root = new Node(undefined,colCount,0)
+        root = new Node(undefined,colCount,0)
         var headerRows = head.find(selectors.row);
         var currParents = [root];
         // Iteration through each row
@@ -530,7 +556,7 @@ function Colme(options) {
 
         /* Transverses the tree to collect its leaf nodes */
         var leafs=[];
-        for ( i in tableNodes){
+        for ( var i in tableNodes){
             if ( tableNodes[i].children.length == 0){
                 leafs.push(tableNodes[i]);
             }
@@ -538,18 +564,18 @@ function Colme(options) {
         /* Connects the last row of the header (the 'leafs') to the first row of the body */
         var firstRow = body.find(selectors.row).first();
         for ( var i = 0 ; i < leafs.length ; i++){
-            firstRow.find("." + leafs[i].id ).each(function(){
-                var newNode = new Node( leafs[i] , 1 , 0);
+            firstRow.find("." + leafs[i].id ).each(function(index){
+                var newNode = new Node( leafs[i] , 1 , 0, leafs[i].id+"--"+i + "--" + index);
                 newNode.DOMelement = $(this);
                 leafs[i].addChild(newNode);
+                tableNodes[newNode.id] = newNode;
             });
         }
-            
         /* Sets the correct width of the headers */
         root.setCellWidth();    
 
-       // console.log(JSON.stringify(root));
     }
+
 
     this.createTree();
 
@@ -579,75 +605,85 @@ function Colme(options) {
         this.toggleable();
     };
 
-}
-
-/**
- * The structure that defines the table is represented
- * internally by a tree, composed of Nodes.
- * The tree can be transversed in both directions to
- * allow propagation of actions up and down.
- * The tree never changes after performing an action
- * on the table. If changes occur, the tree must be
- * refreshed with this.updateTable().
- *
- * @author carlosmtx
- * @author lopis
- */
-function Node (parent,colspan,colspanOffset,newId){
-
-
-    if (this.parent) {
-        this.classes = this.parent.classes + ' ' + this.parent.id;
-    };
-
-    this.addChild = function(child){
-        this.children.push(child);
-    };
 
     /**
-     * Visits all descendants and set its width equal
-     * to the sum of the width of its descendants
+     * The structure that defines the table is represented
+     * internally by a tree, composed of Nodes.
+     * The tree can be transversed in both directions to
+     * allow propagation of actions up and down.
+     * The tree never changes after performing an action
+     * on the table. If changes occur, the tree must be
+     * refreshed with this.updateTable().
      *
+     * @author carlosmtx
      * @author lopis
      */
-    this.setCellWidth = function () {
-        if (!this.children || this.children.length < 1) {
-            return this.DOMelement.is(':visible') ? this.DOMelement.width() : 0;
-        } else {
-            var width = 0;
-            for (var i = 0; i < this.children.length; i++) {
-                width += this.children[i].setCellWidth();
+    function Node (parent,colspan,colspanOffset,newId){
+
+
+        if (this.parent) {
+            this.classes = this.parent.classes + ' ' + this.parent.id;
+        };
+
+        this.addChild = function(child){
+            this.children.push(child);
+        };
+
+        /**
+         * Visits all descendants and set its width equal
+         * to the sum of the width of its descendants
+         *
+         * @author lopis
+         */
+        this.setCellWidth = function () {
+            if (!this.children || this.children.length < 1) {
+                return this.DOMelement.is(':visible') ? this.DOMelement.width() : 0;
+            } else {
+                var width = 0;
+                for (var i = 0; i < this.children.length; i++) {
+                    width += this.children[i].setCellWidth();
+                }
+                this.DOMelement.width(width);
+                return width;
             }
-            this.DOMelement.width(width);
-            return width;
         }
+
+        this.toJSON = function() {
+          return {
+                colspan : this.colspan,
+                id : this.id,
+                children : this.children
+          }  
+        }
+
+        this.toObject = function() {
+          var obj = {
+                colspan  : this.colspan,
+                id       : this.id,
+                width    : this.DOMelement.width(),
+                children : []
+          } 
+          for ( i in this.children ){
+            obj.children.push( this.children[i].toObject() )
+          }
+          return obj;
+        }
+        this.parent         = parent;
+        this.children       = [];
+        this.colspan        = colspan;
+        this.colspanOffset  = colspanOffset; // Only used to build the tree
+        this.id             = !newId ? 'cm-root' : newId;
+        this.classes        = '';
+        this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
+
+        //This Elements exist to help the tree traversing when resizing
+        //-------------------------------------------------
+        this.resizeAcumulator = 0; 
+        this.resizeAmount = 0;
     }
 
-    this.toJSON = function() {
-      return {
-            colspan : this.colspan,
-            colspanOffset : this.colspanOffset,
-            id : this.id,
-            classes : this.classes,
-            children : this.children
-      }  
-    }
 
-    this.toObject = function(){
-        this.toJSON();
-    }
 
-    this.parent         = parent;
-    this.children       = [];
-    this.colspan        = colspan;
-    this.colspanOffset  = colspanOffset; // Only used to build the tree
-    this.id             = !newId ? 'cm-root' : newId;
-    this.classes        = '';
-    this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
 
-    //This Elements exist to help the tree traversing when resizing
-    //-------------------------------------------------
-    this.resizeAcumulator = 0; 
-    this.resizeAmount = 0;
 }
 
