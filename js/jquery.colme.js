@@ -577,7 +577,7 @@ function Colme(options) {
             });
         }
         /* Sets the correct width of the headers */
-        root.setCellWidth();    
+        root.setCellWidth();
 
     }
 
@@ -627,6 +627,19 @@ function Colme(options) {
      */
     function Node (parent,colspan,colspanOffset,newId){
 
+        this.parent         = parent;
+        this.children       = [];
+        this.colspan        = colspan;
+        this.colspanOffset  = colspanOffset; // Only used to build the tree
+        this.id             = !newId ? 'cm-root' : newId;
+        this.classes        = '';
+        this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
+
+        //This Elements exist to help the tree traversing when resizing
+        //-------------------------------------------------
+        this.resizeAcumulator = 0; 
+        this.resizeAmount = 0;
+        
         if (this.parent) {
             this.classes = this.parent.classes + ' ' + this.parent.id;
         };
@@ -674,18 +687,6 @@ function Colme(options) {
           }
           return obj;
         }
-        this.parent         = parent;
-        this.children       = [];
-        this.colspan        = colspan;
-        this.colspanOffset  = colspanOffset; // Only used to build the tree
-        this.id             = !newId ? 'cm-root' : newId;
-        this.classes        = '';
-        this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
-
-        //This Elements exist to help the tree traversing when resizing
-        //-------------------------------------------------
-        this.resizeAcumulator = 0; 
-        this.resizeAmount = 0;
     }
 
 }
