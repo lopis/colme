@@ -5,6 +5,17 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
   white-space: nowrap;
   display: inline-block;
   font-family: sans-serif;
+  .cm-thead {
+    color: whitesmoke;
+    z-index: 2;
+    transform: translateZ(0);
+    .cm-th {
+      background-color: indianred;
+    }
+    .cm-tr:nth-child(odd) .cm-th {
+      background-color: #C13B3B;
+    }
+  }
 }
 
 #cm-floater {
@@ -33,17 +44,6 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
   background-position: right;
   text-align: center;
   text-overflow: ellipsis;
-}
-.cm-thead {
-  color: whitesmoke;
-  z-index: 2;
-  transform: translateZ(0);
-  .cm-th {
-    background-color: indianred;
-  }
-  .cm-tr:nth-child(odd) .cm-th {
-    background-color: #C13B3B;
-  }
 }
 .cm-tbody {
   color: #454545;

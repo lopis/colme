@@ -138,30 +138,55 @@ function Colme(options) {
             currNode = tableNodes[layout[i].id];
             //currNode.width = layout[i].width;
             var aux={};
-            
             for ( k in currNode.children  ){
                 aux[ currNode.children[k].id ] = currNode.children[k];
             }
             
             var newChildren =[];
-
             for ( k in layout[i].children ){
                 newChildren.push( aux[ layout[i].children[k].id] )
             }
-
             currNode.children = newChildren;
         }
 
-        for( i in layout){
-            tableNodes[ layout[i].id ].DOMelement.width( layout[i].width );
-        }
-        for ( i in tableNodes ){
-            if ( tableNodes[i].children.length === 0){
-                var id = tableNodes[i].parent.DOMelement.attr(attributes.id);
-                body.find( "." + id ).width( tableNodes[i].DOMelement.width() ); 
-            }
-        }
+        applyOrderAndWidth(layout);
 
+    }
+
+    function applyOrderAndWidth (layout) {
+        var stack = [{node :root , index :0}];
+
+        do{
+            var current = stack[stack.length-1];
+
+            if (current.node.children.length === 0 && current.node.parent) {
+                $('.' + current.node.parent.id).each(function () {
+                    /* Appends node to own row */
+                    $(this).parent().append($(this));
+                }).width(layout[current.node.id].width); /* Apply width to itself */
+                
+                stack.pop();
+                continue; // because there are not more children
+            };
+
+            if (current.index >= current.node.children.length) {
+                stack.pop();
+                continue; // because there are not more children
+            }
+
+
+            if (current.index === 0 && current.node.parent) {
+                /* Appends node to own row */
+                current.node.DOMelement.parent().append(current.node.DOMelement);
+
+                /* Apply width to itself */
+                current.node.DOMelement.width(layout[current.node.id].width);
+            };
+
+            stack.push({node: current.node.children[current.index++], index : 0});
+
+        } while ( stack.length > 1);
+        
     }
 
     /**
@@ -390,7 +415,9 @@ function Colme(options) {
         var floaterHead = floater.DOMelement.find(selectors.head);
         var floaterBody = floater.DOMelement.find(selectors.body);
         var placeHolder = $('.cm-drag-placeholder');
+        var rowToUpdate = placeHolder.first().parents(selectors.row);
         floater.DOMelement.css('left', -1000);
+
 
         /** Removes mouse binds **/
         $(window).unbind('mousemove');
@@ -406,11 +433,24 @@ function Colme(options) {
             body.find(selectors.row).eq(rowIndex).find('.cm-drag-placeholder').before(thisRowCells);
         });
 
+        /* Apply current column order in the tree */
+        var newChildren = [];
+        console.log(tableNodes[floater.groupId].parent.children);
+        rowToUpdate.find('.' + tableNodes[floater.groupId].parent.id).each(function () {
+            newChildren.push($(this).attr(attributes.id));
+        });
+
+        tableNodes[floater.groupId].parent.children.sort(function (arg1, arg2) {
+            return newChildren.indexOf(arg1.id) -  newChildren.indexOf(arg2.id);
+        });
+        console.log(tableNodes[floater.groupId].parent.children);
+
         /** Removes the placeholder **/
         $('.cm-drag-placeholder').remove();
 
         /** Clears the drag **/
         floater.DOMelement.find(selectors.row).remove();
+
     }
 
     /**
@@ -574,6 +614,7 @@ function Colme(options) {
                 newNode.DOMelement = $(this);
                 leafs[i].addChild(newNode);
                 tableNodes[newNode.id] = newNode;
+                newNode.DOMelement.attr(attributes.id, newNode.id);
             });
         }
         /* Sets the correct width of the headers */

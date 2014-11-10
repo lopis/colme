@@ -2,6 +2,14 @@
   white-space: nowrap;
   display: inline-block;
   font-family: sans-serif; }
+  #cm-table .cm-thead {
+    color: whitesmoke;
+    z-index: 2;
+    transform: translateZ(0); }
+    #cm-table .cm-thead .cm-th {
+      background-color: indianred; }
+    #cm-table .cm-thead .cm-tr:nth-child(odd) .cm-th {
+      background-color: #C13B3B; }
 
 #cm-floater {
   z-index: 91;
@@ -27,16 +35,6 @@
   background-position: right;
   text-align: center;
   text-overflow: ellipsis; }
-
-.cm-thead {
-  color: whitesmoke;
-  background-color: white;
-  z-index: 2;
-  transform: translateZ(0); }
-  .cm-thead .cm-th {
-    background-color: indianred; }
-  .cm-thead .cm-tr:nth-child(odd) .cm-th {
-    background-color: #C13B3B; }
 
 .cm-tbody {
   color: #454545; }
