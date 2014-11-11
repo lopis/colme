@@ -6,12 +6,12 @@ There's always a debate over which approach is the best: using tables or using d
 https://docs.google.com/document/d/1AqeYFpDNVKWpyqyL2ihqFFyYoLYe4CpxAFTqpa2m2-Q/edit
 
 The following features are available in colme:
-**Toggling columns**: hiding or showing a column, or a whole group of columns if colspans are present;
-**Resizing columns**: makes use of the jQueryUI resize plugin to resize columns or columns groups;
-**Dragging columns**: drag the header of a column or of a column group to drag it;
-**Sticky header**: For big tables or tables inside small containers, it may be useful to make the header sticky;
-**Feature selection**: developers can select which features to activate (toggling, resizing, etc);
-**Layout management**: Work in progress. Allows one to save the current table layout in JSON/JS format, useful if one needs to save user preferences;
+  * **Toggling columns**: hiding or showing a column, or a whole group of columns if colspans are present;
+  * **Resizing columns**: makes use of the jQueryUI resize plugin to resize columns or columns groups;
+  * **Dragging columns**: drag the header of a column or of a column group to drag it;
+  * **Sticky header**: For big tables or tables inside small containers, it may be useful to make the header sticky;
+  * **Feature selection**: developers can select which features to activate (toggling, resizing, etc);
+  * **Layout management**: Work in progress. Allows one to save the current table layout in JSON/JS format, useful if one needs to save user preferences;
 
 
 * * *
