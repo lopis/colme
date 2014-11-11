@@ -73,13 +73,15 @@
   background-color: #87A613; }
 
 #configs {
-  height: 80px;
   width: 600px; }
   #configs button {
     opacity: 0.5;
     width: 90px; }
     #configs button.is-on {
       opacity: 1.0; }
+
+#layouts {
+  margin-bottom: 15px; }
 
 .drag-place-holder {
   cursor: move; }

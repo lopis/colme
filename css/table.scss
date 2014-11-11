@@ -88,7 +88,6 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
 }
 
 #configs {
-  height: 80px;
   width: 600px;
   button {
     opacity: 0.5;
@@ -97,6 +96,9 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
       opacity: 1.0;
     }
   }
+}
+#layouts {
+  margin-bottom: 15px;
 }
 
 @import 'colme';
