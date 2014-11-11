@@ -89,13 +89,17 @@ function Colme(options) {
                 return;
             }
 
-            var width = elem.width();
             var node  = tableNodes[groupId];
+            var width = node.getWidth();
+            
+            console.log(width)
 
             elems.addClass('cm-hidden');  // Hides self
             elem.addClass('cm-hidden'); // Hides descendants
             table.trigger('colme:hidden', elems.push(elems));
             for (var parent = node.parent; parent; parent = parent.parent) {
+                
+
                 parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
             };
         });
@@ -107,15 +111,18 @@ function Colme(options) {
                 return;
             }
             elems.removeClass('cm-hidden'); // Shows descendants
-            var width = elem.width();
+            
             var node = tableNodes[groupId];
+            var width = node.getWidth();
             var parent = node.parent;
             elem.removeClass('cm-hidden'); // Shows self
             table.trigger('colme:shown', elems.push(elem));
             for (; parent; parent = parent.parent) {
                 /*  Updates its width and that of its descendants */
-                parent.DOMelement.removeClass('cm-hidden');
-                parent.setCellWidth();
+                if ( parent.parent){
+                    parent.DOMelement.removeClass('cm-hidden');
+                    parent.DOMelement.width( parent.DOMelement.width() + width )
+                }
             };
         });
     }
@@ -237,7 +244,7 @@ function Colme(options) {
                     var span    = element.attr(attributes.span);
                     
                     var resizeRootNode = tableNodes[element.attr(attributes.id)]
-                    resizeRootNode.DOMelement.width(initialWidth)
+                    resizeRootNode.DOMelement.width( resizeRootNode.getWidthResize(initialWidth) )
                     resizeRootNode.resizeAcumulator =0;
                     resizeRootNode.resizeAmount = absDelta;
 
@@ -292,6 +299,8 @@ function Colme(options) {
                     for(ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
                         ancestor.DOMelement.width( ancestor.DOMelement.width() + resizeRootNode.resizeAcumulator * sign );
                     }
+                    console.log(resizeRootNode);
+
                 }
             });
 
@@ -536,8 +545,22 @@ function Colme(options) {
             delete tableNodes[i];
         };
         createTree();
+        root.setCellWidth();
     }
 
+    this.refreshWidth = function(node) {
+        node.resizeAmount = 0;
+        node.resizeAcumulator = 0;
+
+        for( i in node.children){
+            this.refreshWidth(node.children[i]);
+        }
+        if ( node.parent ){
+            node.children.length ? node.DOMelement.width( node.getWidthResize(node.resizeAcumulator ) ) : null;
+
+            node.parent.resizeAcumulator += node.getWidth(); 
+        }
+    }
 
     /**
      * Creates a tree representation of the table using the colspan values to
@@ -627,8 +650,6 @@ function Colme(options) {
             });
         }
         /* Sets the correct width of the headers */
-        root.setCellWidth();
-
     }
 
     function addMarkup(){
@@ -647,8 +668,10 @@ function Colme(options) {
         });
 
     }
+
     addMarkup();
     createTree();
+    this.refreshWidth(root);
 
     /* Inits jquery plugin and sets handlers for resizing */
     if (options.resizable) {
@@ -723,23 +746,28 @@ function Colme(options) {
             this.children.push(child);
         };
 
-        /**
-         * Visits all descendants and set its width equal
-         * to the sum of the width of its descendants
-         *
-         * @author lopis
-         */
-        this.setCellWidth = function () {
-            if (!this.children || this.children.length < 1) {
-                return this.DOMelement.is(':visible') ? this.DOMelement.width() : 0;
-            } else {
-                var width = 0;
-                for (var i = 0; i < this.children.length; i++) {
-                    width += this.children[i].setCellWidth();
-                }
-                this.DOMelement.width(width);
-                return width;
-            }
+        this.getWidth = function(){
+
+            return this.DOMelement.width() + 
+                    parseInt(this.DOMelement.css("border-left-width")) + 
+                    parseInt(this.DOMelement.css("border-right-width")) +
+                    parseInt(this.DOMelement.css("padding-left")) +
+                    parseInt(this.DOMelement.css("padding-right"))+
+                    parseInt(this.DOMelement.css("margin-right"))+
+                    parseInt(this.DOMelement.css("margin-left"))
+
+
+        }
+
+        this.getWidthResize = function(targetWidth){
+            return  targetWidth - (
+                    parseInt(this.DOMelement.css("border-left-width")) + 
+                    parseInt(this.DOMelement.css("border-right-width")) +
+                    parseInt(this.DOMelement.css("padding-left")) +
+                    parseInt(this.DOMelement.css("padding-right"))+
+                    parseInt(this.DOMelement.css("margin-right"))+
+                    parseInt(this.DOMelement.css("margin-left"))
+                    )
         }
 
         this.toJSON = function() {
@@ -770,10 +798,8 @@ function Colme(options) {
 $.fn.colme = function(options) {
     options.table = this;
     Colme.prototype.exp = function () {
-        return 'bam';
     }
     var c = new Colme(options);
-    console.log(c.exp());
 
         /* Public functions */
     return {
