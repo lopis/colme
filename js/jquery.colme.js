@@ -33,12 +33,12 @@
 // function Colme(options) {
 $.fn.colme = function(options) {
 
+
     /**
      * Each table node is kept in this object, accessible
      * with the Id of the node (selectors.span)
      */
     var tableNodes = {};
-
     var floater = {};
 
     if (!options.selectors) {
@@ -47,31 +47,33 @@ $.fn.colme = function(options) {
     if (!options.attributes) {
         options.attributes = {};
     }
+    classes   = {
+        head  : ( options.selectors.head  ? options.selectors.head  : 'cm-thead' ),
+        body  : ( options.selectors.body  ? options.selectors.body  : 'cm-tbody' ),
+        row   : ( options.selectors.row   ? options.selectors.row   : 'cm-tr' ),
+        th    : ( options.selectors.th    ? options.selectors.th    : 'cm-th' ),
+        td    : ( options.selectors.td    ? options.selectors.td    : 'cm-td' ),
+    }
 
     selectors = {
-        head  : ( options.selectors.head  ? options.selectors.head  : '.cm-thead' ),
-        body  : ( options.selectors.body  ? options.selectors.body  : '.cm-tbody' ),
-        row   : ( options.selectors.row   ? options.selectors.row   : '.cm-tr' ),
-        th    : ( options.selectors.th    ? options.selectors.th    : '.cm-th' ),
-        td    : ( options.selectors.td    ? options.selectors.td    : '.cm-td' ),
+        head  : "."+ classes.head ,
+        body  : "."+ classes.body ,
+        row   : "."+ classes.row  ,
+        th    : "."+ classes.th   ,
+        td    : "."+ classes.td   ,
     };
+
     attributes = {
         id    : ( options.attributes.id    ? options.attributes.id    : 'data-cm-id' ), // column id
         span  : ( options.attributes.span  ? options.attributes.span  : 'data-cm-span' ), // colspan property
         floater : 'cm-floater',
     };
 
-
    var table    = this;
    var head     = table.find(selectors.head);
    var body     = table.find(selectors.body);
    var colCount = 0;
    var root ;
-
-   head.find(selectors.row).first().find(selectors.th).each(function () {
-       var c = parseInt($(this).attr(attributes.span));
-       colCount += !c ? 1 : c;
-   });
 
 
     /**
@@ -148,7 +150,6 @@ $.fn.colme = function(options) {
         }
 
         applyOrderWidthAndVisibility(layout);
-
     }
 
     /** 
@@ -349,10 +350,6 @@ $.fn.colme = function(options) {
                 afterLastOfType($(this), groupId, placeholderBody.clone());
             });
 
-            /** Sets initial position of the floater **/
-            floater.DOMelement.css('top', head.offset().top - $(document).scrollTop());
-            floater.DOMelement.css('left', -floater.mouseOffsetX);
-
             /** Copy cells of this col group into the floater **/
             var floaterHead = floater.DOMelement.find(selectors.head);
             var floaterBody = floater.DOMelement.find(selectors.body);
@@ -369,6 +366,12 @@ $.fn.colme = function(options) {
                 floaterBody.append(newRow);
             });
             refreshFloater(event);
+
+            /** Sets initial position of the floater **/
+            floater.DOMelement.css('top', head.offset().top - $(document).scrollTop());
+            floater.DOMelement.css('left', -floater.mouseOffsetX);
+            console.log(head.offset().top);
+            console.log($(document).scrollTop());
 
             /** Bind position of the floater to mouse movement **/
             $(window).mousemove(function(event) {
@@ -545,6 +548,11 @@ $.fn.colme = function(options) {
      * @author lopis
      */
     function createTree(){
+        head.find(selectors.row).first().find(selectors.th).each(function () {
+            var c = parseInt($(this).attr(attributes.span));
+            colCount += !c ? 1 : c;
+        });
+
         root = new Node(undefined,colCount,0)
         var headerRows = head.find(selectors.row);
         var currParents = [root];
@@ -624,6 +632,23 @@ $.fn.colme = function(options) {
 
     }
 
+    function addMarkup(){
+        var rows = head.find(selectors.row);
+        rows.each(function(){
+            $(this).children("div").each( function(){
+                $(this).addClass(classes.th);
+            });
+        });
+
+        rows = body.find(selectors.row);
+        rows.each(function(){
+            $(this).children("div").each( function(){
+                $(this).addClass(classes.td)                
+            });
+        });
+
+    }
+    addMarkup();
     createTree();
 
     /* Inits jquery plugin and sets handlers for resizing */
@@ -656,6 +681,13 @@ $.fn.colme = function(options) {
     if (options.toggleable) {
         toggleable();
     };
+
+    /* Public functions */
+    return {
+        getLayout: getLayout,
+        setLayout: setLayout,
+        exp: exp,
+    }
 
 
     /**
