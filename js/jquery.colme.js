@@ -515,7 +515,10 @@ function Colme(options) {
         container.scroll(function (event) {
             var scrollTop = container.scrollTop();
             var offsetTop = table.offset().top;
-            if (scrollTop > offsetTop) {
+            var offsetBottom = table.height() - head.height();
+            if (scrollTop > offsetTop + offsetBottom) {
+                head.css('transform', 'translateY('+offsetBottom+'px)');
+            } else if(scrollTop > offsetTop) {
                 head.css('transform', 'translateY('+(scrollTop-offsetTop)+'px)');
             } else {
                 head.css('transform', 'translateY(0px)');
@@ -769,11 +772,7 @@ function Colme(options) {
 
 $.fn.colme = function(options) {
     options.table = this;
-    Colme.prototype.exp = function () {
-        return 'bam';
-    }
     var c = new Colme(options);
-    console.log(c.exp());
 
         /* Public functions */
     return {
