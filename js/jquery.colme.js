@@ -369,8 +369,6 @@ function Colme(options) {
             /** Sets initial position of the floater **/
             floater.DOMelement.css('top', head.offset().top - $(document).scrollTop());
             floater.DOMelement.css('left', -floater.mouseOffsetX);
-            console.log(head.offset().top);
-            console.log($(document).scrollTop());
 
             /** Bind position of the floater to mouse movement **/
             $(window).mousemove(function(event) {
@@ -409,7 +407,8 @@ function Colme(options) {
      */
     function refreshFloater (e) {
         var pos = Math.max(Math.min(e.pageX, floater.upperBoundX), floater.lowerBoundX); 
-        $('#cm-floater').css('transform', 'translateX('+pos+'px)');
+        floater.DOMelement.css('transform', 'translateX('+pos+'px)');
+        //floater.DOMelement.find(selectors.head).css('transform', 'translateY('+(30+$(window).scrollTop())+'px)');
     }
 
     /**
@@ -523,7 +522,11 @@ function Colme(options) {
             } else {
                 head.css('transform', 'translateY(0px)');
             }
-        })
+        });
+
+        $(document).ready(function () {
+            container.scroll(); // triggers the repositioning of the header
+        });
     }
 
     /**
@@ -683,10 +686,6 @@ function Colme(options) {
     if (options.toggleable) {
         this.toggleable();
     };
-
-
-
-
 
 
     /**

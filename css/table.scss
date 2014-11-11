@@ -1,13 +1,14 @@
 $semiTransparentPixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAAFAAAABQHH33NSAAAAB3RJTUUH3gkTCSEW3MbWwgAAAA1JREFUCNdj+P///2QACY8Dka9uk1cAAAAASUVORK5CYII=);
 $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAATAAAAEwEOyCcDAAAAB3RJTUUH3goOEBUjx3uMewAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=);
-
+body {
+  font-family: sans-serif;
+}
 .cm-table {
   white-space: nowrap;
   display: inline-block;
-  font-family: sans-serif;
   .cm-thead {
     color: whitesmoke;
-    z-index: 2;
+    z-index: 3;
     transform: translateZ(0);
     .cm-th {
       background-color: indianred;
@@ -19,7 +20,7 @@ $whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF
 }
 
 #cm-floater {
-  z-index: 91;
+  z-index: 3;
   transform: translateZ(0);
   .cm-td, .cm-th {
     background-color: #FFC1C1;
