@@ -30,7 +30,8 @@
  */
 
 
-function Colme(options) {
+// function Colme(options) {
+$.fn.colme = function(options) {
 
     /**
      * Each table node is kept in this object, accessible
@@ -48,7 +49,6 @@ function Colme(options) {
     }
 
     selectors = {
-        table : ( options.selectors.table ? options.selectors.table : '#cm-table' ),
         head  : ( options.selectors.head  ? options.selectors.head  : '.cm-thead' ),
         body  : ( options.selectors.body  ? options.selectors.body  : '.cm-tbody' ),
         row   : ( options.selectors.row   ? options.selectors.row   : '.cm-tr' ),
@@ -58,14 +58,14 @@ function Colme(options) {
     attributes = {
         id    : ( options.attributes.id    ? options.attributes.id    : 'data-cm-id' ), // column id
         span  : ( options.attributes.span  ? options.attributes.span  : 'data-cm-span' ), // colspan property
+        floater : 'cm-floater',
     };
 
 
-   var table    = $(selectors.table);
+   var table    = this;
    var head     = table.find(selectors.head);
    var body     = table.find(selectors.body);
    var colCount = 0;
-   var colme    = this;
    var root ;
 
    head.find(selectors.row).first().find(selectors.th).each(function () {
@@ -79,49 +79,47 @@ function Colme(options) {
      * Enables hiding and showing groups of columns.
      * To trigger a column toggle, trigger 'colme:hideColumn' event on the table.
      */
-    this.toggleable = function() {
-        table.on('colme:hideColumn', function (event, groupId, value) {
-
-            if (value) {
-                var elem  = $('.' + groupId); 
-                if (!elem.is(':visible')) {
-                    return;
-                }
-
-                var elems = $('[' + attributes.id + '=' + groupId + ']');
-                var width = elems.width();
-                var node  = tableNodes[groupId];
-
-                elem.addClass('cm-hidden');  // Hides self
-                elems.addClass('cm-hidden'); // Hides descendants
-                table.trigger('colme:hidden', elems.push(elem));
-                for (var parent = node.parent; parent; parent = parent.parent) {
-                    parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
-                };
-
-            } else {
-                var elem = $('[' + attributes.id + '=' + groupId + ']');
-                if (elem.is(':visible')) {
-                    return;
-                }
-                var elems = $('.' + groupId);
-                elems.removeClass('cm-hidden'); // Shows descendants
-                var width = elem.width();
-                var node = tableNodes[groupId];
-                var parent = node.parent;
-                elem.removeClass('cm-hidden'); // Shows self
-                table.trigger('colme:shown', elems.push(elem));
-                for (; parent; parent = parent.parent) {
-                    /*  Updates its width and that of its descendants */
-                    parent.DOMelement.removeClass('cm-hidden');
-                    parent.setCellWidth();
-                };
-
+    function toggleable() {
+        table.on('colme:hideColumn', function (event, groupId) {
+            var elems  = $('.' + groupId);
+            var elem = $('[' + attributes.id + '=' + groupId + ']'); // The head of the column group
+            
+            if (!elem.is(':visible')) {
+                return;
             }
-        })
+
+            var width = elem.width();
+            var node  = tableNodes[groupId];
+
+            elems.addClass('cm-hidden');  // Hides self
+            elem.addClass('cm-hidden'); // Hides descendants
+            table.trigger('colme:hidden', elems.push(elems));
+            for (var parent = node.parent; parent; parent = parent.parent) {
+                parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
+            };
+        });
+
+        table.on('colme:showColumn', function (event, groupId) {
+            var elem = $('[' + attributes.id + '=' + groupId + ']'); // The head of the column group
+            var elems = $('.' + groupId); // The other cells
+            if (elem.is(':visible')) {
+                return;
+            }
+            elems.removeClass('cm-hidden'); // Shows descendants
+            var width = elem.width();
+            var node = tableNodes[groupId];
+            var parent = node.parent;
+            elem.removeClass('cm-hidden'); // Shows self
+            table.trigger('colme:shown', elems.push(elem));
+            for (; parent; parent = parent.parent) {
+                /*  Updates its width and that of its descendants */
+                parent.DOMelement.removeClass('cm-hidden');
+                parent.setCellWidth();
+            };
+        });
     }
 
-    this.getLayout = function() {
+    function getLayout() {
         var layout = {}
         for ( i in tableNodes ){
             layout[i] = tableNodes[i].toObject();
@@ -129,7 +127,7 @@ function Colme(options) {
         return layout;
     }
 
-    this.setLayout = function( layout ) {
+    function setLayout( layout ) {
         if ( typeof layout === layout){
             layout = JSON.parse(layout);
         }
@@ -204,8 +202,8 @@ function Colme(options) {
      * @author Your Heart
      * @param {Hapiness} lots_of - The stuff dreams are made of.
      */
-    this.doYouBelieveInMiracles = function(){
-        return "Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!"
+    function doYouBelieveInMiracles() {
+        return "Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!";
     }
 
     /**
@@ -214,8 +212,7 @@ function Colme(options) {
      * @author lopis
      * @author carlosmtx
      */
-    this.resizable = function() {
-        var cm = this;
+    function resizable() {
         var colIds = head.find(selectors.th + '[' + attributes.id + ']');
 
         $('<style>.ui-resizable-helper::after{height: '+table.height()+'px;}</style>').appendTo('head');
@@ -309,10 +306,10 @@ function Colme(options) {
      * @method draggable
      * Enables dragging columns or column groups. Columns can be dragged within their group.
      */
-    this.draggable = function() {
+    function draggable() {
 
         // Initialize handler for column dragging
-        $(selectors.th).mousedown(function(event) {
+        head.find(selectors.th).mousedown(function(event) {
 
             // Prevents children from triggering this event
             // Only accepts left click to drag
@@ -512,7 +509,7 @@ function Colme(options) {
      *
      * @param {Object} container - An object, typically as returned by '$(window)', that is being scrolled on.
      */
-    this.headerSticky = function(container) {
+    function headerSticky(container) {
         container.scroll(function (event) {
             var scrollTop = container.scrollTop();
             var offsetTop = table.offset().top;
@@ -531,12 +528,12 @@ function Colme(options) {
      *
      * @author lopis
      */
-    this.updateTable = function () {
+    function updateTable() {
         // Refreshed the table tree representation.
         for (var i = 0; i < tableNodes.length; i++) {
             delete tableNodes[i];
         };
-        this.createTree();
+        createTree();
     }
 
 
@@ -547,7 +544,7 @@ function Colme(options) {
      * @author carlosmtx
      * @author lopis
      */
-    this.createTree = function(){
+    function createTree(){
         root = new Node(undefined,colCount,0)
         var headerRows = head.find(selectors.row);
         var currParents = [root];
@@ -627,33 +624,37 @@ function Colme(options) {
 
     }
 
-
-    this.createTree();
+    createTree();
 
     /* Inits jquery plugin and sets handlers for resizing */
     if (options.resizable) {
-        this.resizable();
+        resizable();
     };
 
     /* Creates floater and sets dragging handlers */
     if (options.draggable) {
-        floater.DOMelement = $('<div>', {id: 'cm-floater'});
-        floater.DOMelement.append($('<div>', {class: selectors.head.replace('.','')}));
-        floater.DOMelement.append($('<div>', {class: selectors.body.replace('.','')}));
-        floater.DOMelement.css({position: 'fixed'})
-        $('body').append(floater.DOMelement);
+        var currentFloater = $('#' + attributes.floater);
+        if (currentFloater.length === 0) {
+            floater.DOMelement = $('<div>', {id: attributes.floater});
+            floater.DOMelement.append($('<div>', {class: selectors.head.replace('.','')}));
+            floater.DOMelement.append($('<div>', {class: selectors.body.replace('.','')}));
+            floater.DOMelement.css({position: 'fixed'});
+            $('body').append(floater.DOMelement);
+        } else {
+            floater.DOMelement = currentFloater;
+        }
 
-        this.draggable();
+        draggable();
     };
 
     /* Sets scroll handlers to control table header */
     if (options.sticky) {
-        this.headerSticky(options.sticky);
+        headerSticky(options.sticky);
     };
 
     /* Sets toggling handlers */
     if (options.toggleable) {
-        this.toggleable();
+        toggleable();
     };
 
 
