@@ -46,15 +46,25 @@ function Colme(options) {
     if (!options.attributes) {
         options.attributes = {};
     }
+    classes   = {
+        head  : ( options.selectors.head  ? options.selectors.head  : 'cm-thead' ),
+        body  : ( options.selectors.body  ? options.selectors.body  : 'cm-tbody' ),
+        row   : ( options.selectors.row   ? options.selectors.row   : 'cm-tr' ),
+        th    : ( options.selectors.th    ? options.selectors.th    : 'cm-th' ),
+        td    : ( options.selectors.td    ? options.selectors.td    : 'cm-td' ),
+    }
 
     selectors = {
-        table : ( options.selectors.table ? options.selectors.table : '#cm-table' ),
-        head  : ( options.selectors.head  ? options.selectors.head  : '.cm-thead' ),
-        body  : ( options.selectors.body  ? options.selectors.body  : '.cm-tbody' ),
-        row   : ( options.selectors.row   ? options.selectors.row   : '.cm-tr' ),
-        th    : ( options.selectors.th    ? options.selectors.th    : '.cm-th' ),
-        td    : ( options.selectors.td    ? options.selectors.td    : '.cm-td' ),
+        table : "#"+ ( options.selectors.table ? options.selectors.table : 'cm-table' ),
+        head  : "."+ classes.head ,
+        body  : "."+ classes.body ,
+        row   : "."+ classes.row  ,
+        th    : "."+ classes.th   ,
+        td    : "."+ classes.td   ,
     };
+
+    console.log(selectors);
+
     attributes = {
         id    : ( options.attributes.id    ? options.attributes.id    : 'data-cm-id' ), // column id
         span  : ( options.attributes.span  ? options.attributes.span  : 'data-cm-span' ), // colspan property
@@ -68,10 +78,7 @@ function Colme(options) {
    var colme    = this;
    var root ;
 
-   head.find(selectors.row).first().find(selectors.th).each(function () {
-       var c = parseInt($(this).attr(attributes.span));
-       colCount += !c ? 1 : c;
-   });
+
 
 
     /**
@@ -548,6 +555,11 @@ function Colme(options) {
      * @author lopis
      */
     this.createTree = function(){
+        head.find(selectors.row).first().find(selectors.th).each(function () {
+            var c = parseInt($(this).attr(attributes.span));
+            colCount += !c ? 1 : c;
+        });
+
         root = new Node(undefined,colCount,0)
         var headerRows = head.find(selectors.row);
         var currParents = [root];
@@ -627,7 +639,24 @@ function Colme(options) {
 
     }
 
+    this.addMarkup = function(){
+        var rows = head.find(selectors.row);
+        console.log(rows);
+        rows.each(function(){
+            $(this).children("div").each( function(){
+                $(this).addClass(classes.th);
+            });
+        });
 
+        rows = body.find(selectors.row);
+        rows.each(function(){
+            $(this).children("div").each( function(){
+                $(this).addClass(classes.td)                
+            });
+        });
+
+    }
+    this.addMarkup();
     this.createTree();
 
     /* Inits jquery plugin and sets handlers for resizing */
