@@ -1,10 +1,12 @@
+body {
+  font-family: sans-serif; }
+
 .cm-table {
   white-space: nowrap;
-  display: inline-block;
-  font-family: sans-serif; }
+  display: inline-block; }
   .cm-table .cm-thead {
     color: whitesmoke;
-    z-index: 2;
+    z-index: 3;
     transform: translateZ(0); }
     .cm-table .cm-thead .cm-th {
       background-color: indianred; }
@@ -12,7 +14,7 @@
       background-color: #C13B3B; }
 
 #cm-floater {
-  z-index: 91;
+  z-index: 3;
   transform: translateZ(0); }
   #cm-floater .cm-td, #cm-floater .cm-th {
     background-color: #FFC1C1; }
