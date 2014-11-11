@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../vendor/jquery-ui.css">
 </head>
 <body>
-    <div id="configs1">
+    <div class='configs' id="configs1">
       <div class ='layouts'>
       <button class = "addLayout">Add Layout</button>
       </div>
@@ -352,7 +352,7 @@
       </div>
     </div>
 
-    <div id="configs2">
+    <div class='configs' id="configs2">
       <div class ='layouts'>
       <button class = "addLayout">Add Layout</button>
       </div>
@@ -702,6 +702,7 @@
 <script>
     $(document).ready(function () {
         var init = new Date();
+
         var colme1 = $('#cm-table1').colme({
             resizable: true,
             draggable: true,
@@ -773,8 +774,6 @@
         $("#configs2 .layouts").append(newLayout);
       });
 
-
-      colme1.exp();
     });
 
 </script>

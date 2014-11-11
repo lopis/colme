@@ -72,12 +72,12 @@
   width: 5px;
   background-color: #87A613; }
 
-#configs {
+.configs {
   width: 600px; }
-  #configs button {
+  .configs button {
     opacity: 0.5;
     width: 90px; }
-    #configs button.is-on {
+    .configs button.is-on {
       opacity: 1.0; }
 
 #layouts {
