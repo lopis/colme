@@ -29,10 +29,9 @@
  * THE SOFTWARE.
  */
 
-
+'use strict';
 function Colme(options) {
 
-    
     /**
      * Each table node is kept in this object, accessible
      * with the Id of the node (selectors.span)
@@ -46,23 +45,23 @@ function Colme(options) {
     if (!options.attributes) {
         options.attributes = {};
     }
-    classes   = {
+    var classes   = {
         head  : ( options.selectors.head  ? options.selectors.head  : 'cm-thead' ),
         body  : ( options.selectors.body  ? options.selectors.body  : 'cm-tbody' ),
         row   : ( options.selectors.row   ? options.selectors.row   : 'cm-tr' ),
         th    : ( options.selectors.th    ? options.selectors.th    : 'cm-th' ),
         td    : ( options.selectors.td    ? options.selectors.td    : 'cm-td' ),
-    }
-
-    selectors = {
-        head  : "."+ classes.head ,
-        body  : "."+ classes.body ,
-        row   : "."+ classes.row  ,
-        th    : "."+ classes.th   ,
-        td    : "."+ classes.td   ,
     };
 
-    attributes = {
+    var selectors = {
+        head  : '.'+ classes.head ,
+        body  : '.'+ classes.body ,
+        row   : '.'+ classes.row  ,
+        th    : '.'+ classes.th   ,
+        td    : '.'+ classes.td   ,
+    };
+
+    var attributes = {
         id    : ( options.attributes.id    ? options.attributes.id    : 'data-cm-id' ), // column id
         span  : ( options.attributes.span  ? options.attributes.span  : 'data-cm-span' ), // colspan property
         floater : 'cm-floater',
@@ -91,17 +90,15 @@ function Colme(options) {
 
             var node  = tableNodes[groupId];
             var width = node.getWidth();
-            
-            console.log(width)
 
             elems.addClass('cm-hidden');  // Hides self
             elem.addClass('cm-hidden'); // Hides descendants
             table.trigger('colme:hidden', elems.push(elems));
-            for (var parent = node.parent; parent; parent = parent.parent) {
+            for ( var parent = node.parent; parent; parent = parent.parent) {
                 
 
                 parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
-            };
+            }
         });
 
         table.on('colme:showColumn', function (event, groupId) {
@@ -121,42 +118,42 @@ function Colme(options) {
                 /*  Updates its width and that of its descendants */
                 if ( parent.parent){
                     parent.DOMelement.removeClass('cm-hidden');
-                    parent.DOMelement.width( parent.DOMelement.width() + width )
+                    parent.DOMelement.width( parent.DOMelement.width() + width );
                 }
-            };
+            }
         });
-    }
+    };
 
     this.getLayout = function() {
-        var layout = {}
-        for ( i in tableNodes ){
+        var layout = {};
+        for ( var i in tableNodes ){
             layout[i] = tableNodes[i].toObject();
         }
         return layout;
-    }
+    };
 
     this.setLayout = function( layout ) {
         if ( typeof layout === layout){
             layout = JSON.parse(layout);
         }
         var currNode;
-        for ( i in layout ){
+        for ( var i in layout ){
             currNode = tableNodes[layout[i].id];
             //currNode.width = layout[i].width;
             var aux={};
-            for ( k in currNode.children  ){
-                aux[ currNode.children[k].id ] = currNode.children[k];
+            for ( var j in currNode.children  ){
+                aux[ currNode.children[j].id ] = currNode.children[j];
             }
             
             var newChildren =[];
-            for ( k in layout[i].children ){
-                newChildren.push( aux[ layout[i].children[k].id] )
+            for ( var k in layout[i].children ){
+                newChildren.push( aux[ layout[i].children[k].id] );
             }
             currNode.children = newChildren;
         }
 
         applyOrderWidthAndVisibility(layout);
-    }
+    };
 
     /** 
      * Applies order, width and visibility
@@ -177,7 +174,7 @@ function Colme(options) {
                 
                 stack.pop();
                 continue; // because there are not more children
-            };
+            }
 
             if (current.index >= current.node.children.length) {
                 stack.pop();
@@ -194,8 +191,8 @@ function Colme(options) {
 
                 /* Set visiblity */
                 current.node.DOMelement.removeClass('cm-hidden');
-                current.node.DOMelement.addClass(!layout[current.node.id].visible? 'cm-hidden' : '')
-            };
+                current.node.DOMelement.addClass(!layout[current.node.id].visible? 'cm-hidden' : '');
+            }
 
             stack.push({node: current.node.children[current.index++], index : 0});
 
@@ -210,7 +207,7 @@ function Colme(options) {
      * @param {Hapiness} lots_of - The stuff dreams are made of.
      */
     function doYouBelieveInMiracles() {
-        return "Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!";
+        return 'Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!';
     }
 
     /**
@@ -241,17 +238,18 @@ function Colme(options) {
                     var sign            = delta > 0 ? 1 : -1;
 
                     var element = $(ui.element.context);
-                    var span    = element.attr(attributes.span);
+                    //var span    = element.attr(attributes.span);
                     
-                    var resizeRootNode = tableNodes[element.attr(attributes.id)]
-                    resizeRootNode.DOMelement.width( resizeRootNode.getWidthResize(initialWidth) )
+                    var resizeRootNode = tableNodes[element.attr(attributes.id)];
+                    resizeRootNode.DOMelement.width( resizeRootNode.getWidthResize(initialWidth) );
                     resizeRootNode.resizeAcumulator =0;
                     resizeRootNode.resizeAmount = absDelta;
 
                     var stack = [ {iterated : false , node : resizeRootNode } ];
                     var childrenNodes =[{iterated : false , node : resizeRootNode }];
                     var leafNodes = [];
-                    var lost =0;
+                    //var lost =0;
+
                     // Traversing the tree 
                     // -------------------
                     do{
@@ -265,15 +263,15 @@ function Colme(options) {
                         }
                         //The node children must be visited to determine the current node width change
                         //----------------------------------------------------------------------------
-                        for ( var i = 0 ; i < current.node.children.length ; i++ ){
-                            var theNew = {iterated : false , node : current.node.children[i] };
+                        for ( var child = 0 ; child < current.node.children.length ; child++ ){
+                            var theNew = {iterated : false , node : current.node.children[child] };
                             theNew.node.resizeAmount    = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() ) ;
                             theNew.node.resizeAcumulator= 0; 
                             stack.push(theNew);
                             childrenNodes.push(theNew);
                         }
                         //The current node is a final node , the current node can be resized without problem
-                        if ( current.node.children.length == 0){
+                        if ( current.node.children.length === 0){
                             current.node.resizeAcumulator = current.node.resizeAmount; 
                             leafNodes.push(current);   
                         }
@@ -290,16 +288,15 @@ function Colme(options) {
                     }
 
                     // Applying possible width to all the body elements
-                    for ( var i = 0 ; i < leafNodes.length ; i++){
+                    for ( i = 0 ; i < leafNodes.length ; i++){
                         var id = leafNodes[i].node.parent.DOMelement.attr(attributes.id);
-                        body.find( "." + id ).width( leafNodes[i].node.DOMelement.width() );
+                        body.find( '.' + id ).width( leafNodes[i].node.DOMelement.width() );
                     }
 
                     // Applying possible width to all parent nodes
-                    for(ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
+                    for( var ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
                         ancestor.DOMelement.width( ancestor.DOMelement.width() + resizeRootNode.resizeAcumulator * sign );
                     }
-                    console.log(resizeRootNode);
 
                 }
             });
@@ -308,7 +305,7 @@ function Colme(options) {
                 e.stopPropagation();
             });
         });
-    }
+    };
 
 
     /**
@@ -322,7 +319,9 @@ function Colme(options) {
 
             // Prevents children from triggering this event
             // Only accepts left click to drag
-            if (event.target != this || event.which != 1) {return}; 
+            if (event.target != this || event.which != 1) {
+                return;
+            }
 
             //$(selectors.th).unbind('mousedown');
 
@@ -340,7 +339,7 @@ function Colme(options) {
             var parentNode = tableNodes[groupId].parent.DOMelement;
             if (!parentNode || parentNode.length < 1) {
                 parentNode = head;
-            };
+            }
             floater.lowerBoundX = parentNode.offset().left + floater.mouseOffsetX;
             floater.upperBoundX = parentNode.offset().left + parentNode.width() + floater.mouseOffsetX - width;
 
@@ -390,7 +389,7 @@ function Colme(options) {
             // Because this is a sow task, it's down in the end of this function.
             $('*').css('user-select', 'none');
         });
-    }
+    };
 
     /**
      * Utility function to add 'afterElement' after the last found element with a given class 'groupId'
@@ -404,7 +403,7 @@ function Colme(options) {
         var lastOfGroup = element.find('.' + groupId).last();
         if (lastOfGroup.length > 0) {
             lastOfGroup.after(afterElement);
-        };
+        }
     }
 
     /** 
@@ -520,7 +519,7 @@ function Colme(options) {
      * @param {Object} container - An object, typically as returned by '$(window)', that is being scrolled on.
      */
     this.headerSticky = function(container) {
-        container.scroll(function (event) {
+        container.scroll(function () {
             var scrollTop = container.scrollTop();
             var offsetTop = table.offset().top;
             var offsetBottom = table.height() - head.height();
@@ -536,7 +535,7 @@ function Colme(options) {
         $(document).ready(function () {
             container.scroll(); // triggers the repositioning of the header
         });
-    }
+    };
 
     /**
      * @method updateTable
@@ -547,26 +546,27 @@ function Colme(options) {
      */
     this.updateTable = function() {
         // Refreshed the table tree representation.
-        for (var i = 0; i < tableNodes.length; i++) {
+        for ( var i = 0; i < tableNodes.length; i++) {
             delete tableNodes[i];
-        };
+        }
         createTree();
         root.setCellWidth();
-    }
+    };
 
     this.refreshWidth = function(node) {
         node.resizeAmount = 0;
         node.resizeAcumulator = 0;
 
-        for( i in node.children){
-            this.refreshWidth(node.children[i]);
+        for( var child in node.children){
+            this.refreshWidth(node.children[child]);
         }
         if ( node.parent ){
-            node.children.length ? node.DOMelement.width( node.getWidthResize(node.resizeAcumulator ) ) : null;
-
-            node.parent.resizeAcumulator += node.getWidth(); 
+            if (node.children.length) {
+                node.DOMelement.width( node.getWidthResize(node.resizeAcumulator ) );
+            }
+            node.parent.resizeAcumulator += node.getWidth();
         }
-    }
+    };
 
     /**
      * Creates a tree representation of the table using the colspan values to
@@ -581,12 +581,12 @@ function Colme(options) {
             colCount += !c ? 1 : c;
         });
 
-        root = new Node(undefined,colCount,0)
+        root = new Node(undefined,colCount,0);
         var headerRows = head.find(selectors.row);
         var currParents = [root];
         // Iteration through each row
         //-------------------------------
-        for (var i = 0; i < headerRows.length; i++) {
+        for ( var i = 0; i < headerRows.length; i++) {
 
             var newParents=[];
             var currentOffset = 0;
@@ -594,16 +594,16 @@ function Colme(options) {
 
             // Iterating through each th inside a row
             //---------------------------------------
-            for ( j = 0 ; j < ths.length ; j++ ){
-                var colspan = $(ths[j]).attr(attributes.span)
-                colspan = parseInt( !colspan ? "1" : colspan);
+            for ( var  j = 0 ; j < ths.length ; j++ ){
+                var colspan = $(ths[j]).attr(attributes.span);
+                colspan = parseInt( !colspan ? '1' : colspan);
                 var newChild = 0;
 
                 // Checking which parent is the newChild parent (?)
                 // ------------------------------------------------
-                for(k = 0 ; k < currParents.length ; k++){
+                for( var k = 0 ; k < currParents.length ; k++){
                     if ( currentOffset < currParents[k].colspanOffset + currParents[k].colspan  ){
-                        newChildId = 'cm-'+i+'-'+j+'-'+k ;
+                        var newChildId = 'cm-'+i+'-'+j+'-'+k ;
                         $(ths[j]).addClass(currParents[k].classes);
                         $(ths[j]).addClass(currParents[k].id);
                         $(ths[j]).attr(attributes.id, newChildId);
@@ -639,18 +639,18 @@ function Colme(options) {
 
         /* Transverses the tree to collect its leaf nodes */
         var leafs=[];
-        for ( var i in tableNodes){
-            if ( tableNodes[i].children.length == 0){
-                leafs.push(tableNodes[i]);
+        for ( var node in tableNodes){
+            if ( tableNodes[node].children.length === 0){
+                leafs.push(tableNodes[node]);
             }
         }
         /* Connects the last row of the header (the 'leafs') to the first row of the body */
         var firstRow = body.find(selectors.row).first();
-        for ( var i = 0 ; i < leafs.length ; i++){
-            firstRow.find("." + leafs[i].id ).each(function(index){
-                var newNode = new Node( leafs[i] , 1 , 0, leafs[i].id+"--"+i + "--" + index);
+        for ( var leaf = 0 ; leaf < leafs.length ; leaf++){
+            firstRow.find('.' + leafs[leaf].id ).each(function(index){
+                var newNode = new Node( leafs[leaf] , 1 , 0, leafs[leaf].id + '--' + leaf + '--' + index);
                 newNode.DOMelement = $(this);
-                leafs[i].addChild(newNode);
+                leafs[leaf].addChild(newNode);
                 tableNodes[newNode.id] = newNode;
                 newNode.DOMelement.attr(attributes.id, newNode.id);
             });
@@ -661,15 +661,15 @@ function Colme(options) {
     function addMarkup(){
         var rows = head.find(selectors.row);
         rows.each(function(){
-            $(this).children("div").each( function(){
+            $(this).children('div').each( function(){
                 $(this).addClass(classes.th);
             });
         });
 
         rows = body.find(selectors.row);
         rows.each(function(){
-            $(this).children("div").each( function(){
-                $(this).addClass(classes.td)                
+            $(this).children('div').each( function(){
+                $(this).addClass(classes.td);
             });
         });
 
@@ -682,7 +682,7 @@ function Colme(options) {
     /* Inits jquery plugin and sets handlers for resizing */
     if (options.resizable) {
         this.resizable();
-    };
+    }
 
     /* Creates floater and sets dragging handlers */
     if (options.draggable) {
@@ -698,18 +698,19 @@ function Colme(options) {
         }
 
         this.draggable();
-    };
+    }
 
     /* Sets scroll handlers to control table header */
     if (options.sticky) {
         this.headerSticky(options.sticky);
-    };
+    }
 
     /* Sets toggling handlers */
     if (options.toggleable) {
         this.toggleable();
-    };
+    }
 
+    doYouBelieveInMiracles();
 
     /**
      * The structure that defines the table is represented internally by a tree, composed of Nodes.
@@ -733,7 +734,7 @@ function Colme(options) {
         this.colspanOffset  = colspanOffset; // Only used to build the tree
         this.id             = !newId ? 'cm-root' : newId;
         this.classes        = '';
-        this.DOMelement     = head.find("["+attributes.id+"="+newId+"]");
+        this.DOMelement     = head.find('['+attributes.id+'='+newId+']');
 
         //This Elements exist to help the tree traversing when resizing
         //-------------------------------------------------
@@ -742,7 +743,7 @@ function Colme(options) {
         
         if (this.parent) {
             this.classes = this.parent.classes + ' ' + this.parent.id;
-        };
+        }
 
         this.addChild = function(child){
             this.children.push(child);
@@ -751,34 +752,32 @@ function Colme(options) {
         this.getWidth = function(){
 
             return this.DOMelement.width() + 
-                    parseInt(this.DOMelement.css("border-left-width")) + 
-                    parseInt(this.DOMelement.css("border-right-width")) +
-                    parseInt(this.DOMelement.css("padding-left")) +
-                    parseInt(this.DOMelement.css("padding-right"))+
-                    parseInt(this.DOMelement.css("margin-right"))+
-                    parseInt(this.DOMelement.css("margin-left"))
-
-
-        }
+                    parseInt(this.DOMelement.css('border-left-width')) + 
+                    parseInt(this.DOMelement.css('border-right-width')) +
+                    parseInt(this.DOMelement.css('padding-left')) +
+                    parseInt(this.DOMelement.css('padding-right'))+
+                    parseInt(this.DOMelement.css('margin-right'))+
+                    parseInt(this.DOMelement.css('margin-left'));
+        };
 
         this.getWidthResize = function(targetWidth){
             return  targetWidth - (
-                    parseInt(this.DOMelement.css("border-left-width")) + 
-                    parseInt(this.DOMelement.css("border-right-width")) +
-                    parseInt(this.DOMelement.css("padding-left")) +
-                    parseInt(this.DOMelement.css("padding-right"))+
-                    parseInt(this.DOMelement.css("margin-right"))+
-                    parseInt(this.DOMelement.css("margin-left"))
-                    )
-        }
+                    parseInt(this.DOMelement.css('border-left-width')) + 
+                    parseInt(this.DOMelement.css('border-right-width')) +
+                    parseInt(this.DOMelement.css('padding-left')) +
+                    parseInt(this.DOMelement.css('padding-right'))+
+                    parseInt(this.DOMelement.css('margin-right'))+
+                    parseInt(this.DOMelement.css('margin-left'))
+                    );
+        };
 
         this.toJSON = function() {
           return {
                 colspan : this.colspan,
                 id : this.id,
                 children : this.children
-          }  
-        }
+          };
+        };
 
         this.toObject = function() {
           var obj = {
@@ -787,12 +786,13 @@ function Colme(options) {
                 width    : this.DOMelement.width(),
                 children : [],
                 visible  : !this.DOMelement.hasClass('cm-hidden'),
-          } 
-          for ( i in this.children ){
-            obj.children.push( this.children[i].toObject() )
+          };
+
+          for ( var i in this.children ){
+            obj.children.push( this.children[i].toObject() );
           }
           return obj;
-        }
+        };
     }
 
 }
@@ -806,5 +806,5 @@ $.fn.colme = function(options) {
     return {
         getLayout: c.getLayout,
         setLayout: c.setLayout,
-    }
-}
+    };
+};
