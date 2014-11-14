@@ -3,4 +3,6 @@ vendor/
 css/table.css.map
 css/table.css
 composer.lock
-components/
+components
+bower_components
+bower_components/
