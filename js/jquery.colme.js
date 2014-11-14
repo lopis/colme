@@ -258,6 +258,9 @@ function Colme(options) {
                         //----------------------------------------------------------
                         if ( current.iterated ){
                             stack.pop();
+                            if ( !current.node.isVisible() ){
+                                continue;
+                            }
                             current.node.parent.resizeAcumulator += current.node.resizeAcumulator;
                             continue;
                         }
@@ -272,8 +275,10 @@ function Colme(options) {
                         }
                         //The current node is a final node , the current node can be resized without problem
                         if ( current.node.children.length === 0){
-                            current.node.resizeAcumulator = current.node.resizeAmount; 
-                            leafNodes.push(current);   
+                            if ( current.node.isVisible() ){
+                               current.node.resizeAcumulator = current.node.resizeAmount; 
+                                leafNodes.push(current);
+                            }   
                         }
                         //The current node was visited
                         //----------------------------
@@ -770,7 +775,12 @@ function Colme(options) {
                     parseInt(this.DOMelement.css('margin-left'))
                     );
         };
-
+        this.isVisible = function(){
+            if ( !this.DOMelement){
+                return true;
+            }
+            return this.DOMelement.hasClass('cm-hidden') ? false : true;
+        }
         this.toJSON = function() {
           return {
                 colspan : this.colspan,
