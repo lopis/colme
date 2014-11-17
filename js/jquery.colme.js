@@ -258,6 +258,9 @@ function Colme(options) {
                         //----------------------------------------------------------
                         if ( current.iterated ){
                             stack.pop();
+                            if ( !current.node.isVisible() ){
+                                continue;
+                            }
                             current.node.parent.resizeAcumulator += current.node.resizeAcumulator;
                             continue;
                         }
@@ -265,15 +268,36 @@ function Colme(options) {
                         //----------------------------------------------------------------------------
                         for ( var child = 0 ; child < current.node.children.length ; child++ ){
                             var theNew = {iterated : false , node : current.node.children[child] };
-                            theNew.node.resizeAmount    = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() ) ;
+                            theNew.node.resizeAmount = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() );
+                            theNew.node.minimumWidth = Math.ceil( current.node.getImmutableWidth()  * theNew.node.DOMelement.width() / current.node.DOMelement.width() );  
                             theNew.node.resizeAcumulator= 0; 
                             stack.push(theNew);
                             childrenNodes.push(theNew);
                         }
                         //The current node is a final node , the current node can be resized without problem
-                        if ( current.node.children.length === 0){
+                        if ( current.node.children.length === 0 &&  current.node.isVisible()){
                             current.node.resizeAcumulator = current.node.resizeAmount; 
-                            leafNodes.push(current);   
+                            if ( sign < 0){
+                                var parentRestric= false;
+                                var childRestric = false;
+                                if ( current.node.minimumWidth > current.node.getWidth() - current.node.resizeAmount ){
+                                    parentRestric =  current.node.getWidth() - current.node.minimumWidth;
+                                }
+                                if ( current.node.resizeAmount > current.node.getMutableWidth() ){
+                                    childRestric = current.node.getMutableWidth() - 1;
+                                }
+                                if ( parentRestric || childRestric ){
+                                    parentRestric = parentRestric === false ? Number.MAX_VALUE : parentRestric;
+                                    childRestric  = childRestric  === false ? Number.MAX_VALUE : childRestric;
+                                    console.log(parentRestric);
+                                    console.log(childRestric);
+                                    current.node.resizeAcumulator = parentRestric < childRestric ? parentRestric : childRestric;
+                                }
+                            }else{
+                            }
+                            leafNodes.push(current);
+                            
+                            
                         }
                         //The current node was visited
                         //----------------------------
@@ -740,6 +764,7 @@ function Colme(options) {
         //-------------------------------------------------
         this.resizeAcumulator = 0; 
         this.resizeAmount = 0;
+        this.minimumWidth = 0;
         
         if (this.parent) {
             this.classes = this.parent.classes + ' ' + this.parent.id;
@@ -769,6 +794,29 @@ function Colme(options) {
                     parseInt(this.DOMelement.css('margin-right'))+
                     parseInt(this.DOMelement.css('margin-left'))
                     );
+        };
+
+        this.getImmutableWidth = function(){
+          return    parseInt(this.DOMelement.css('border-left-width')) + 
+                    parseInt(this.DOMelement.css('border-right-width')) +
+                    parseInt(this.DOMelement.css('padding-left')) +
+                    parseInt(this.DOMelement.css('padding-right'))+
+                    parseInt(this.DOMelement.css('margin-right'))+
+                    parseInt(this.DOMelement.css('margin-left'));
+        };
+
+        this.getMutableWidth = function(){
+            if ( this.DOMelement.width() == 0){
+                console.log(this.DOMelement)
+            }
+            return parseInt( this.DOMelement.width() );
+        };
+
+        this.isVisible = function(){
+            if ( !this.DOMelement){
+                return true;
+            }
+            return this.DOMelement.hasClass('cm-hidden') ? false : true;
         };
 
         this.toJSON = function() {

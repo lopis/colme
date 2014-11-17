@@ -1,0 +1,22 @@
+{
+  "name": "Colme",
+  "version": "0.0.0",
+  "homepage": "https://github.com/lopis/colme",
+  "authors": [
+    "carlosmtx <cmcmteixeira@gmail.com>",
+  ],
+  "description": "Plugin For Column Management",
+  "main": "jquery.colme.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "jquery-ui": "~1.11.2"
+  }
+}

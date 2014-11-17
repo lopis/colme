@@ -37,7 +37,9 @@ body {
   background-position: right;
   text-align: center;
   text-overflow: ellipsis; }
-
+.cm-th{
+  border :5px solid black !important;
+}
 .cm-tbody {
   color: #454545; }
   .cm-tbody .cm-td {

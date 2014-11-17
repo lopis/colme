@@ -1,8 +1,8 @@
 README.html
-vendor/
 css/table.css.map
 css/table.css
 composer.lock
 components/
 Gemfile.lock
 components/
+bower_components/
