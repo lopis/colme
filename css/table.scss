@@ -12,6 +12,7 @@ body {
     transform: translateZ(0);
     .cm-th {
       background-color: indianred;
+      border: 5px solid #FF7E2E;
     }
     .cm-tr:nth-child(odd) .cm-th {
       background-color: #C13B3B;
@@ -40,8 +41,7 @@ body {
   overflow: hidden;
   text-oveflow: ellipsis;
   width: 100px;
-  background-image: $whitePixel;
-  background-repeat: repeat-y;
+  border-right: 1px solid rgba(255,255,255,0.5);
   background-position: right;
   text-align: center;
   text-overflow: ellipsis;

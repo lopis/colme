@@ -9,7 +9,8 @@ body {
     z-index: 3;
     transform: translateZ(0); }
     .cm-table .cm-thead .cm-th {
-      background-color: indianred; }
+      background-color: indianred;
+      border: 5px solid #FF7E2E; }
     .cm-table .cm-thead .cm-tr:nth-child(odd) .cm-th {
       background-color: #C13B3B; }
 
@@ -32,14 +33,11 @@ body {
   overflow: hidden;
   text-oveflow: ellipsis;
   width: 100px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAATAAAAEwEOyCcDAAAAB3RJTUUH3goOEBUjx3uMewAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=);
-  background-repeat: repeat-y;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
   background-position: right;
   text-align: center;
   text-overflow: ellipsis; }
-.cm-th{
-  border :5px solid black !important;
-}
+
 .cm-tbody {
   color: #454545; }
   .cm-tbody .cm-td {
