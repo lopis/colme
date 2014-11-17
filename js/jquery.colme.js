@@ -95,9 +95,8 @@ function Colme(options) {
             elem.addClass('cm-hidden'); // Hides descendants
             table.trigger('colme:hidden', elems.push(elems));
             for ( var parent = node.parent; parent; parent = parent.parent) {
-                
-
-                parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
+                //parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
+                parent.setCellWidth();
             }
         });
 
@@ -119,6 +118,7 @@ function Colme(options) {
                 if ( parent.parent){
                     parent.DOMelement.removeClass('cm-hidden');
                     parent.DOMelement.width( parent.DOMelement.width() + width );
+                    parent.setCellWidth();
                 }
             }
         });
@@ -841,6 +841,30 @@ function Colme(options) {
           }
           return obj;
         };
+
+        /**
+         * Visits all descendants and set its width equal
+         * to the sum of the width of its descendants
+         *
+         * @author lopis
+         */
+        this.setCellWidth = function () {
+            if (!this.children || this.children.length < 1) {
+                return this.DOMelement.is(':visible') ? this.getWidth() : 0;
+            } else {
+                var width = 0;
+                for (var i = 0; i < this.children.length; i++) {
+                    width += this.children[i].setCellWidth();
+                }
+                if (width === 0) {
+                    this.DOMelement.hide();
+                } else {
+                    this.DOMelement.width(this.getWidthResize(width));
+                    this.DOMelement.show();
+                }
+                return width;
+            }
+        }
     }
 
 }
