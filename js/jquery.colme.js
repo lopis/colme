@@ -244,6 +244,7 @@ function Colme(options) {
                     resizeRootNode.DOMelement.width( resizeRootNode.getWidthResize(initialWidth) );
                     resizeRootNode.resizeAcumulator =0;
                     resizeRootNode.resizeAmount = absDelta;
+                    console.log("Delta:"+absDelta);
 
                     var stack = [ {iterated : false , node : resizeRootNode } ];
                     var childrenNodes =[{iterated : false , node : resizeRootNode }];
@@ -268,7 +269,7 @@ function Colme(options) {
                         //----------------------------------------------------------------------------
                         for ( var child = 0 ; child < current.node.children.length ; child++ ){
                             var theNew = {iterated : false , node : current.node.children[child] };
-                            theNew.node.resizeAmount = Math.floor( current.node.resizeAmount * theNew.node.DOMelement.width() / current.node.DOMelement.width() );
+                            theNew.node.resizeAmount = Math.floor( current.node.resizeAmount * theNew.node.getWidth() / current.node.getWidth() );
                             theNew.node.minimumWidth = Math.ceil( current.node.getImmutableWidth()  * theNew.node.DOMelement.width() / current.node.DOMelement.width() );  
                             theNew.node.resizeAcumulator= 0; 
                             stack.push(theNew);
@@ -276,8 +277,11 @@ function Colme(options) {
                         }
                         //The current node is a final node , the current node can be resized without problem
                         if ( current.node.children.length === 0 &&  current.node.isVisible()){
+                            console.log(current.node.resizeAmount);
+                            console.log(current.node);
                             current.node.resizeAcumulator = current.node.resizeAmount; 
                             if ( sign < 0){
+                                console.log("HERE");
                                 var parentRestric= false;
                                 var childRestric = false;
                                 if ( current.node.minimumWidth > current.node.getWidth() - current.node.resizeAmount ){
@@ -289,11 +293,8 @@ function Colme(options) {
                                 if ( parentRestric || childRestric ){
                                     parentRestric = parentRestric === false ? Number.MAX_VALUE : parentRestric;
                                     childRestric  = childRestric  === false ? Number.MAX_VALUE : childRestric;
-                                    console.log(parentRestric);
-                                    console.log(childRestric);
                                     current.node.resizeAcumulator = parentRestric < childRestric ? parentRestric : childRestric;
                                 }
-                            }else{
                             }
                             leafNodes.push(current);
                             
@@ -305,21 +306,18 @@ function Colme(options) {
 
 
                     } while ( stack.length > 1);
-
                     // Applying possible width to all the descendant nodes 
                     for ( var i = 0 ; i < childrenNodes.length ; i++){
-                        childrenNodes[i].node.DOMelement.width( childrenNodes[i].node.resizeAcumulator * sign + childrenNodes[i].node.DOMelement.width()   );
+                        childrenNodes[i].node.DOMelement.width( childrenNodes[i].node.resizeAcumulator * sign + childrenNodes[i].node.getMutableWidth()   );
                     }
-
                     // Applying possible width to all the body elements
                     for ( i = 0 ; i < leafNodes.length ; i++){
                         var id = leafNodes[i].node.parent.DOMelement.attr(attributes.id);
-                        body.find( '.' + id ).width( leafNodes[i].node.DOMelement.width() );
+                        body.find( '.' + id ).width( leafNodes[i].node.getMutableWidth() );
                     }
-
                     // Applying possible width to all parent nodes
                     for( var ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
-                        ancestor.DOMelement.width( ancestor.DOMelement.width() + resizeRootNode.resizeAcumulator * sign );
+                        ancestor.DOMelement.width( ancestor.getMutableWidth() + resizeRootNode.resizeAcumulator * sign );
                     }
 
                 }
