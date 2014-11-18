@@ -353,7 +353,7 @@ function Colme(options) {
             var groupId = $(this).attr(attributes.id);
 
             /** Initial position of the element in the page **/
-            floater.startPosX    = $(this).offset().left + $(window).scrollLeft();
+            floater.startPosX    = $(this).offset().left - $(window).scrollLeft();
             floater.startPosY    = $(this).offset().top + $(window).scrollTop();
             floater.mouseOffsetX = event.pageX - floater.startPosX;
             floater.groupId      = groupId;
@@ -436,7 +436,8 @@ function Colme(options) {
      * @author lopis
      */
     function refreshFloater (e) {
-        var pos = Math.max(Math.min(e.pageX, floater.upperBoundX), floater.lowerBoundX); 
+        var scrollLeft = $(window).scrollLeft();
+        var pos = Math.max(Math.min(e.pageX, floater.upperBoundX- scrollLeft), floater.lowerBoundX- scrollLeft); 
         floater.DOMelement.css('transform', 'translateX('+pos+'px)');
         //floater.DOMelement.find(selectors.head).css('transform', 'translateY('+(30+$(window).scrollTop())+'px)');
     }
@@ -503,7 +504,9 @@ function Colme(options) {
 
         // Position relative to element is (pageX-offset).
         // Position is bound to the col group
-        var mouseX = Math.max(Math.min(event.pageX, floater.upperBoundX), floater.lowerBoundX) - floater.mouseOffsetX; 
+        var scrollLeft = $(window).scrollLeft();
+        var mouseX = Math.max(Math.min(event.pageX + scrollLeft, floater.upperBoundX), floater.lowerBoundX) - floater.mouseOffsetX; 
+
         if (mouseX >= offset + nextSibling.width() * 0.4) {
             movePlaceholder(firstPlaceholder, true, nextSibling.attr(attributes.id));
         } else if (mouseX <= offset - prevSibling.width() * 0.6) {
