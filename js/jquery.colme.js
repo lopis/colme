@@ -714,7 +714,7 @@ function Colme(options) {
             floater.DOMelement.append($('<div>', {class: selectors.head.replace('.','')}));
             floater.DOMelement.append($('<div>', {class: selectors.body.replace('.','')}));
             floater.DOMelement.css({position: 'fixed'});
-            $('body').append(floater.DOMelement);
+            table.append(floater.DOMelement);
         } else {
             floater.DOMelement = currentFloater;
         }
@@ -855,10 +855,10 @@ function Colme(options) {
                     width += this.children[i].setCellWidth();
                 }
                 if (width === 0) {
-                    this.DOMelement.hide();
+                    this.DOMelement.addClass('cm-hidden');
                 } else {
                     this.DOMelement.width(this.getWidthResize(width));
-                    this.DOMelement.show();
+                    this.DOMelement.removeClass('cm-hidden');
                 }
                 return width;
             }
