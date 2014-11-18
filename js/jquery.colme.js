@@ -28,8 +28,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 'use strict';
+var $;
 function Colme(options) {
 
     /**
@@ -89,7 +89,6 @@ function Colme(options) {
             }
 
             var node  = tableNodes[groupId];
-            var width = node.getWidth();
 
             elems.addClass('cm-hidden');  // Hides self
             elem.addClass('cm-hidden'); // Hides descendants
@@ -244,7 +243,6 @@ function Colme(options) {
                     resizeRootNode.DOMelement.width( resizeRootNode.getWidthResize(initialWidth) );
                     resizeRootNode.resizeAcumulator =0;
                     resizeRootNode.resizeAmount = absDelta;
-                    console.log("Delta:"+absDelta);
 
                     var stack = [ {iterated : false , node : resizeRootNode } ];
                     var childrenNodes =[{iterated : false , node : resizeRootNode }];
@@ -277,11 +275,8 @@ function Colme(options) {
                         }
                         //The current node is a final node , the current node can be resized without problem
                         if ( current.node.children.length === 0 &&  current.node.isVisible()){
-                            console.log(current.node.resizeAmount);
-                            console.log(current.node);
                             current.node.resizeAcumulator = current.node.resizeAmount; 
                             if ( sign < 0){
-                                console.log("HERE");
                                 var parentRestric= false;
                                 var childRestric = false;
                                 if ( current.node.minimumWidth > current.node.getWidth() - current.node.resizeAmount ){
@@ -546,7 +541,7 @@ function Colme(options) {
     this.headerSticky = function(container) {
         container.scroll(function () {
             var scrollTop = container.scrollTop();
-            var offsetTop = table.offset().top;
+            var offsetTop = container.offset() ? 0 : table.offset().top; 
             var offsetBottom = table.height() - head.height();
             if (scrollTop > offsetTop + offsetBottom) {
                 head.css('transform', 'translateY('+offsetBottom+'px)');
@@ -787,29 +782,27 @@ function Colme(options) {
         };
 
         this.getWidthResize = function(targetWidth){
-            return  targetWidth - (
-                    parseInt(this.DOMelement.css('border-left-width')) + 
-                    parseInt(this.DOMelement.css('border-right-width')) +
-                    parseInt(this.DOMelement.css('padding-left')) +
-                    parseInt(this.DOMelement.css('padding-right'))+
-                    parseInt(this.DOMelement.css('margin-right'))+
-                    parseInt(this.DOMelement.css('margin-left'))
+            return targetWidth - 
+                    (
+                       parseInt(this.DOMelement.css('border-left-width')) + 
+                       parseInt(this.DOMelement.css('border-right-width')) +
+                       parseInt(this.DOMelement.css('padding-left')) +
+                       parseInt(this.DOMelement.css('padding-right'))+
+                       parseInt(this.DOMelement.css('margin-right'))+
+                       parseInt(this.DOMelement.css('margin-left'))
                     );
         };
 
         this.getImmutableWidth = function(){
-          return    parseInt(this.DOMelement.css('border-left-width')) + 
-                    parseInt(this.DOMelement.css('border-right-width')) +
-                    parseInt(this.DOMelement.css('padding-left')) +
-                    parseInt(this.DOMelement.css('padding-right'))+
-                    parseInt(this.DOMelement.css('margin-right'))+
-                    parseInt(this.DOMelement.css('margin-left'));
+            return parseInt(this.DOMelement.css('border-left-width')) + 
+                   parseInt(this.DOMelement.css('border-right-width')) +
+                   parseInt(this.DOMelement.css('padding-left')) +
+                   parseInt(this.DOMelement.css('padding-right'))+
+                   parseInt(this.DOMelement.css('margin-right'))+
+                   parseInt(this.DOMelement.css('margin-left'));
         };
 
         this.getMutableWidth = function(){
-            if ( this.DOMelement.width() == 0){
-                console.log(this.DOMelement)
-            }
             return parseInt( this.DOMelement.width() );
         };
 
@@ -865,7 +858,7 @@ function Colme(options) {
                 }
                 return width;
             }
-        }
+        };
     }
 
 }
