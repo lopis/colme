@@ -10,18 +10,19 @@ body {
     transform: translateZ(0); }
     .cm-table .cm-thead .cm-th {
       background-color: indianred;
-      border: 5px solid #FF7E2E; }
+      border: 2px solid rgba(0, 0, 0, 0.1); }
     .cm-table .cm-thead .cm-tr:nth-child(odd) .cm-th {
-      background-color: #C13B3B; }
+      background-color: #033649; }
 
 #cm-floater {
   z-index: 3;
   transform: translateZ(0); }
   #cm-floater .cm-td, #cm-floater .cm-th {
-    background-color: #FFC1C1; }
+    background-color: whitesmoke;
+    color: #022D3D; }
 
 .cm-tr {
-  height: 30px;
+  height: 45px;
   font-size: 0;
   display: block; }
 
@@ -29,7 +30,7 @@ body {
   font-size: 12px;
   display: inline-block;
   height: 100%;
-  line-height: 30px;
+  line-height: 45px;
   overflow: hidden;
   text-oveflow: ellipsis;
   width: 100px;
@@ -41,9 +42,9 @@ body {
 .cm-tbody {
   color: #454545; }
   .cm-tbody .cm-td {
-    background-color: #E3C2FF; }
+    background-color: #E8DDCB; }
   .cm-tbody .cm-tr:nth-child(odd) .cm-td {
-    background-color: #CDA9EC; }
+    background-color: #EFE6D8; }
 
 .ui-resizable-helper {
   height: 1000px;
@@ -51,8 +52,8 @@ body {
   overflow: visible !important; }
   .ui-resizable-helper::after {
     z-index: 49 !important;
-    border-right: 3px solid #FF0020;
-    opacity: 0.5;
+    border-right: 3px solid #8CB2E3;
+    opacity: 0.6;
     position: absolute;
     right: 0px;
     content: attr(data-filler);
@@ -61,8 +62,8 @@ body {
 
 .ui-resizable-handle {
   width: 10px !important;
-  background-color: lightsalmon;
-  opacity: 0.5; }
+  background-color: white;
+  opacity: 0.1; }
   .ui-resizable-handle:hover {
     width: 15px !important; }
 
@@ -75,10 +76,17 @@ body {
   background-color: #87A613; }
 
 .configs {
-  width: 600px; }
+  margin-top: center; }
   .configs button {
-    opacity: 0.5;
+    border: 1px solid #033649;
+    border-radius: 2px;
+    padding: 5px;
+    margin: 3px;
+    background-color: #045877;
+    color: whitesmoke;
     width: 90px; }
+    .configs button[data-cm-id] {
+      opacity: 0.5; }
     .configs button.is-on {
       opacity: 1.0; }
 
@@ -89,7 +97,8 @@ body {
   cursor: move; }
 
 .cm-drag-placeholder {
-  background-color: #84FF97 !important; }
+  background-color: #C2EAC1 !important;
+  border: transparent; }
 
 .cm-hidden {
   display: none; }

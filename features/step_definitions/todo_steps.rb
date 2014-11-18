@@ -62,3 +62,18 @@ Then(/^The header must be down $/) do
     fail("ArgumentError")
   end
 end
+
+Given(/^the width of the column (.*) is (\d+)px$/) do |name, pixels|
+  width = find('#cm-table1 .cm-th', :text => name)['style']
+  if ! /{Regexp.escape(pixels)}px/.match()
+    fail('Incorrect width exception. Width is' + find('#cm-table1 .cm-th', :text => name)['width'])
+  end
+end
+
+When(/^I resize the column Info (\d+)px to the right$/) do |name|
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^the width of the column Info must be at least (\d+)px \#Takes into account the worst case of pixel ajustments$/) do |name|
+  pending # express the regexp above with the code you wish you had
+end
