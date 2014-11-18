@@ -51,3 +51,14 @@ AfterStep('@pause') do
   print "Press Return to continue..."
   STDIN.getc
 end
+
+When(/^I scroll down$/) do
+  print page.execute_script "window.scrollBy(0,500)"
+end
+
+Then(/^The header must be down $/) do
+  print find("#cm-table1 .cm-thead")["style"]
+  if  ! /transform: translateY\(3..px\)/.match(find("#cm-table1 .cm-thead")["style"])
+    fail("ArgumentError")
+  end
+end
