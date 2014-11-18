@@ -32,3 +32,9 @@ Feature: Todo
         And   The cell 2º Sem should not be visible
         And   The cell 3º Tri should not be visible
         And   The cell 4º Tri should not be visible
+
+    @javascript
+    Scenario: Scroll Down
+        Given I am on the home page
+        When  I scroll down 
+        Then  The header must be down 
