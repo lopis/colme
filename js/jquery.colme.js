@@ -90,9 +90,13 @@ function Colme(options) {
 
             var node  = tableNodes[groupId];
 
-            elems.addClass('cm-hidden');  // Hides self
-            elem.addClass('cm-hidden'); // Hides descendants
-            table.trigger('colme:hidden', elems.push(elems));
+            elems.addClass('cm-hidden'); // Hides descendant
+            elems.filter(selectors.th).each(function () {
+                table.trigger('colme:hidden', $(this).attr(attributes.id));
+            });
+
+            elem.addClass('cm-hidden');
+            table.trigger('colme:hidden', groupId);
             for ( var parent = node.parent; parent; parent = parent.parent) {
                 //parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
                 parent.setCellWidth();
@@ -105,17 +109,23 @@ function Colme(options) {
             if (elem.is(':visible')) {
                 return;
             }
-            elems.removeClass('cm-hidden'); // Shows descendants
+            
+            elems.removeClass('cm-hidden'); // Shows descendant
+            
+            elems.filter(selectors.th).each(function () {
+                table.trigger('colme:shown', $(this).attr(attributes.id));
+            });
             
             var node = tableNodes[groupId];
             var width = node.getWidth();
             var parent = node.parent;
             elem.removeClass('cm-hidden'); // Shows self
-            table.trigger('colme:shown', elems.push(elem));
+            table.trigger('colme:shown', groupId);
             for (; parent; parent = parent.parent) {
                 /*  Updates its width and that of its descendants */
                 if ( parent.parent){
                     parent.DOMelement.removeClass('cm-hidden');
+                    table.trigger('colme:shown', parent.id);
                     parent.DOMelement.width( parent.DOMelement.width() + width );
                     parent.setCellWidth();
                 }
@@ -571,6 +581,7 @@ function Colme(options) {
         }
         createTree();
         root.setCellWidth();
+        table.trigger('colme:isReady');
     };
 
     this.refreshWidth = function(node) {
@@ -731,6 +742,7 @@ function Colme(options) {
     }
 
     doYouBelieveInMiracles();
+    table.trigger('colme:isReady');
 
     /**
      * The structure that defines the table is represented internally by a tree, composed of Nodes.
