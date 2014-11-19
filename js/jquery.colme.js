@@ -101,6 +101,7 @@ function Colme(options) {
                 //parent.DOMelement.width(parent.DOMelement.width() - width); // Removes self width from ancestors
                 parent.setCellWidth();
             }
+            table.trigger('colme:reflow');
         });
 
         table.on('colme:showColumn', function (event, groupId) {
@@ -130,6 +131,7 @@ function Colme(options) {
                     parent.setCellWidth();
                 }
             }
+            table.trigger('colme:reflow');
         });
     };
 
@@ -206,7 +208,7 @@ function Colme(options) {
             stack.push({node: current.node.children[current.index++], index : 0});
 
         } while ( stack.length > 1);
-        
+        table.trigger('colme:reflow');
     }
 
     /**
@@ -324,7 +326,7 @@ function Colme(options) {
                     for( var ancestor = resizeRootNode.parent; ancestor ; ancestor = ancestor.parent) {
                         ancestor.DOMelement.width( ancestor.getMutableWidth() + resizeRootNode.resizeAcumulator * sign );
                     }
-
+                    table.trigger('colme:reflow');
                 }
             });
 
@@ -490,6 +492,7 @@ function Colme(options) {
 
         /** Clears the drag **/
         floater.DOMelement.find(selectors.row).remove();
+        table.trigger('colme:reflow');
     }
 
     /**
@@ -686,7 +689,6 @@ function Colme(options) {
                 newNode.DOMelement.attr(attributes.id, newNode.id);
             });
         }
-        /* Sets the correct width of the headers */
     }
 
     function addMarkup(){
