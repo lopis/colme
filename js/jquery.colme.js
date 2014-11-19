@@ -443,7 +443,7 @@ function Colme(options) {
     function refreshFloater (e) {
         var scrollLeft = $(window).scrollLeft();
         var pos = Math.max(Math.min(e.pageX, floater.upperBoundX- scrollLeft), floater.lowerBoundX- scrollLeft); 
-        floater.DOMelement.css('transform', 'translateX('+pos+'px)');
+        floater.DOMelement.css('transform', 'translate3D('+pos+'px, 0, 0)');
         //floater.DOMelement.find(selectors.head).css('transform', 'translateY('+(30+$(window).scrollTop())+'px)');
     }
 
