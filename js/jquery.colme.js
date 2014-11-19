@@ -142,7 +142,7 @@ function Colme(options) {
     };
 
     this.setLayout = function( layout ) {
-        if ( typeof layout === layout){
+        if ( typeof layout == "string"){
             layout = JSON.parse(layout);
         }
         var currNode;
@@ -174,7 +174,7 @@ function Colme(options) {
             var current = stack[stack.length-1];
 
             if (current.node.children.length === 0 && current.node.parent) {
-                $('.' + current.node.parent.id).each(function () {
+                table.find('.' + current.node.parent.id).each(function () {
                     /* Appends node to own row */
                     $(this).parent().append($(this));
                     $(this).removeClass('cm-hidden');
