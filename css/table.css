@@ -7,7 +7,8 @@ body {
   .cm-table .cm-thead {
     color: whitesmoke;
     z-index: 3;
-    transform: translateZ(0); }
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden; }
     .cm-table .cm-thead .cm-th {
       background-color: indianred;
       border: 2px solid rgba(0, 0, 0, 0.1); }

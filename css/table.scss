@@ -21,6 +21,7 @@ body {
     color: whitesmoke;
     z-index: 3;
     transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
     .cm-th {
       background-color: indianred;
       border: 2px solid rgba(0,0,0,0.1);
