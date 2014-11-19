@@ -1883,13 +1883,13 @@
         button.append($(this).text());
         button.click(function () {
           if ($(this).hasClass('is-on')) {
-            element.trigger('colme:hideColumn', [th.attr('data-cm-id'), $(this).hasClass('is-on')]);
+            element.trigger('colme:hideColumn', th.attr('data-cm-id'));
             $(this).removeClass('is-on');
           } else {
-            element.trigger('colme:showColumn', [th.attr('data-cm-id'), $(this).hasClass('is-on')]);
+            element.trigger('colme:showColumn', th.attr('data-cm-id'));
             $(this).addClass('is-on');
           }
-        })
+        });
         configs.append(button);
       });
     }
@@ -1916,6 +1916,10 @@
         toggleable: true,
         sticky: $("#container1"),
       });
+      createToggles($('#cm-table1'), $('#configs1'));
+      handleLayouts(0, $("#configs1"), 0);
+      console.log('Ready in ' + (new Date() - init) + 'ms');
+      init = new Date();
 
       colmes[1] = $('#cm-table2').colme({
         resizable: true,
@@ -1923,6 +1927,10 @@
         toggleable: true,
         sticky: $(window),
       });
+      createToggles($('#cm-table2'), $('#configs2'));
+      handleLayouts(1, $("#configs2"), 1);
+      console.log('Ready in ' + (new Date() - init) + 'ms');
+      init = new Date();
 
       colmes[2] = $('#cm-table3').colme({
         resizable: true,
@@ -1930,15 +1938,9 @@
         toggleable: true,
         sticky: $(window),
       });
-
-      createToggles($('#cm-table1'), $('#configs1'));
-      createToggles($('#cm-table2'), $('#configs2'));
       createToggles($('#cm-table3'), $('#configs3'));
-
-      handleLayouts(0, $("#configs1"), 0);
-      handleLayouts(1, $("#configs2"), 1);
       handleLayouts(2, $("#configs3"), 2);
-
+      console.log('Ready in ' + (new Date() - init) + 'ms');
     });
 
 </script>
