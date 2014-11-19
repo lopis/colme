@@ -13,6 +13,7 @@ The following features are available in colme:
   * **Feature selection**: developers can select which features to activate (toggling, resizing, etc);
   * **Layout management**: Work in progress. Allows one to save the current table layout in JSON/JS format, useful if one needs to save user preferences;
 
+Working demo: http://codepen.io/lopis/pen/myyrLY
 
 * * *
 
