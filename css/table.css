@@ -1,67 +1,60 @@
 body {
   font-family: sans-serif; }
 
-.cm-table {
+/* Table structure */
+.cm-table, #cm-floater {
   white-space: nowrap;
   display: inline-block; }
-  .cm-table .cm-thead {
-    color: whitesmoke;
+  .cm-table .cm-thead, #cm-floater .cm-thead {
     z-index: 3;
     transform: translateZ(0);
     -webkit-backface-visibility: hidden; }
-    .cm-table .cm-thead .cm-th {
-      background-color: indianred;
-      border: 2px solid rgba(0, 0, 0, 0.1); }
-    .cm-table .cm-thead .cm-tr:nth-child(odd) .cm-th {
-      background-color: #033649; }
+  .cm-table .cm-tr, #cm-floater .cm-tr {
+    font-size: 0;
+    display: block; }
+  .cm-table .cm-th, .cm-table .cm-td, #cm-floater .cm-th, #cm-floater .cm-td {
+    font-size: 12px;
+    display: inline-block;
+    height: 100%;
+    width: 100px;
+    overflow: hidden; }
 
-#cm-floater {
-  z-index: 3;
-  transform: translateZ(0); }
-  #cm-floater .cm-td, #cm-floater .cm-th {
-    background-color: whitesmoke;
-    color: #022D3D; }
-
-.cm-tr {
-  height: 45px;
-  font-size: 0;
-  display: block; }
-
-.cm-th, .cm-td {
-  font-size: 12px;
-  display: inline-block;
-  height: 100%;
+/* Table theme */
+.cm-table .cm-thead {
+  color: whitesmoke; }
+  .cm-table .cm-thead .cm-th {
+    background-color: indianred;
+    border: 2px solid rgba(0, 0, 0, 0.1); }
+  .cm-table .cm-thead .cm-tr:nth-child(odd) .cm-th {
+    background-color: #033649; }
+.cm-table .cm-tr {
+  height: 45px; }
+.cm-table .cm-th, .cm-table .cm-td {
   line-height: 45px;
-  overflow: hidden;
   text-oveflow: ellipsis;
-  width: 100px;
   border-right: 2px solid rgba(255, 255, 255, 0.5);
   border-left: 2px solid rgba(255, 255, 255, 0.5);
-  background-position: right;
-  text-align: center;
-  text-overflow: ellipsis; }
+  text-align: center; }
+
+#cm-floater .cm-td, #cm-floater .cm-th {
+  background-color: whitesmoke;
+  color: #022D3D; }
 
 .cm-tbody {
-  color: #454545; }
+  color: #022D3D; }
   .cm-tbody .cm-td {
     background-color: #E8DDCB; }
   .cm-tbody .cm-tr:nth-child(odd) .cm-td {
     background-color: #EFE6D8; }
 
+/* The vertical ruler that appears when resizing */
 .ui-resizable-helper {
-  height: 1000px;
-  width: 5px;
-  overflow: visible !important; }
+  width: 5px; }
   .ui-resizable-helper::after {
-    z-index: 49 !important;
-    border-right: 3px solid #8CB2E3;
-    opacity: 0.6;
-    position: absolute;
-    right: 0px;
-    content: attr(data-filler);
-    width: 1px;
-    display: inline-block; }
+    border-color: #8CB2E3;
+    opacity: 0.6; }
 
+/* The small bar that triggers resizing */
 .ui-resizable-handle {
   width: 10px !important;
   background-color: white;
@@ -69,13 +62,10 @@ body {
   .ui-resizable-handle:hover {
     width: 15px !important; }
 
-.dragger {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 5px;
-  background-color: #87A613; }
+/* The emtpy space left when dragging */
+.cm-drag-placeholder {
+  background-color: #C2EAC1 !important;
+  border: transparent; }
 
 .configs {
   margin-top: center; }
@@ -91,18 +81,31 @@ body {
       opacity: 0.5; }
     .configs button.is-on {
       opacity: 1.0; }
+  .configs #layouts {
+    margin-bottom: 15px; }
 
-#layouts {
-  margin-bottom: 15px; }
-
-.drag-place-holder {
+.drag-place-holder, .ui-resizable {
   cursor: move; }
 
-.cm-drag-placeholder {
-  background-color: #C2EAC1 !important;
-  border: transparent; }
+.ui-resizable-helper {
+  height: 1000px;
+  width: 1px;
+  overflow: visible !important; }
+  .ui-resizable-helper::after {
+    z-index: 49 !important;
+    border-right: 3px solid white;
+    position: absolute;
+    right: 0px;
+    width: 1px;
+    display: inline-block; }
 
 .cm-hidden {
   display: none; }
+
+#cm-floater {
+  z-index: 3;
+  transform: translateZ(0); }
+  #cm-floater .cm-td, #cm-floater .cm-th {
+    color: black; }
 
 /*# sourceMappingURL=table.css.map */

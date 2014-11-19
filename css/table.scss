@@ -1,6 +1,3 @@
-$semiTransparentPixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAAFAAAABQHH33NSAAAAB3RJTUUH3gkTCSEW3MbWwgAAAA1JREFUCNdj+P///2QACY8Dka9uk1cAAAAASUVORK5CYII=);
-$whitePixel: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAATAAAAEwEOyCcDAAAAB3RJTUUH3goOEBUjx3uMewAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=);
-
 $terra-terra:        #E8DDCB;
 $terra-light:        #EFE6D8;
 $aqua-profunda:      #033649;
@@ -14,14 +11,33 @@ $row-height:         45px;
 body {
   font-family: sans-serif;
 }
-.cm-table {
+
+/* Table structure */
+.cm-table, #cm-floater {
   white-space: nowrap;
   display: inline-block;
   .cm-thead {
-    color: whitesmoke;
     z-index: 3;
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
+  }
+  .cm-tr {
+    font-size: 0; // Fixes space between cells
+    display: block;
+  }
+  .cm-th, .cm-td {
+    font-size: 12px;
+    display: inline-block;
+    height: 100%;
+    width: 100px;
+    overflow: hidden;
+  }
+}
+
+/* Table theme */
+.cm-table {
+  .cm-thead {
+    color: whitesmoke;
     .cm-th {
       background-color: indianred;
       border: 2px solid rgba(0,0,0,0.1);
@@ -30,39 +46,27 @@ body {
       background-color: $aqua-profunda;
     }
   }
+  .cm-tr {
+    height: $row-height;
+  }
+  .cm-th, .cm-td {
+    line-height: $row-height;
+    text-oveflow: ellipsis;
+    border-right: 2px solid rgba(255,255,255,0.5);
+    border-left: 2px solid rgba(255,255,255,0.5);
+    text-align: center;
+  }
 }
 
 #cm-floater {
-  z-index: 3;
-  transform: translateZ(0);
   .cm-td, .cm-th {
     background-color: whitesmoke;
     color: $aqua-mucho-profunda;
   }
 }
 
-.cm-tr {
-  height: $row-height;
-  font-size: 0;
-  display: block;
-}
-.cm-th, .cm-td {
-  font-size: 12px;
-  display: inline-block;
-  height: 100%;
-  line-height: $row-height;
-  overflow: hidden;
-  text-oveflow: ellipsis;
-  width: 100px;
-  border-right: 2px solid rgba(255,255,255,0.5);
-  border-left: 2px solid rgba(255,255,255,0.5);
-  background-position: right;
-  text-align: center;
-  text-overflow: ellipsis;
-}
-
 .cm-tbody {
-  color: #454545;
+  color: $aqua-mucho-profunda;
   .cm-td {
     background-color: $terra-terra;
   }
@@ -70,21 +74,17 @@ body {
     background-color: $terra-light;
   }
 }
+
+/* The vertical ruler that appears when resizing */
 .ui-resizable-helper{
-  height: 1000px;
   width: 5px;
-  overflow: visible !important;
   &::after {
-    z-index: 49 !important;
-    border-right: 3px solid #8CB2E3;
+    border-color: #8CB2E3;
     opacity: 0.6;
-    position: absolute;
-    right: 0px;
-    content: attr(data-filler);
-    width: 1px;
-    display: inline-block;
   }
 }
+
+/* The small bar that triggers resizing */
 .ui-resizable-handle{
   width: 10px !important;
   background-color: white;
@@ -94,13 +94,10 @@ body {
   }
 }
 
-.dragger {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 5px;
-  background-color: #87A613;
+/* The emtpy space left when dragging */
+.cm-drag-placeholder {
+  background-color: #C2EAC1 !important;
+  border: rgba(0,0,0,0);
 }
 
 .configs {
@@ -120,10 +117,10 @@ body {
       opacity: 1.0;
     }
   }
-}
-#layouts {
-  margin-bottom: 15px;
+  #layouts {
+    margin-bottom: 15px;
+  }
 }
 
-@import 'colme';
+@import 'jquery.colme';
 

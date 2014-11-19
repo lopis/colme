@@ -1,0 +1,30 @@
+.drag-place-holder, .ui-resizable{
+  cursor: move;
+}
+
+.ui-resizable-helper{
+  height: 1000px;
+  width: 1px;
+  overflow: visible !important;
+  &::after {
+    z-index: 49 !important;
+    border-right: 3px solid white;
+    position: absolute;
+    right: 0px;
+    width: 1px;
+    display: inline-block;
+  }
+}
+
+.cm-hidden {
+  display: none;
+}
+
+#cm-floater {
+  z-index: 3;
+  transform: translateZ(0);
+  .cm-td, .cm-th {
+    color: black;
+  }
+}
+
