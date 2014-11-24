@@ -579,6 +579,7 @@
      *
      * @param {Object} container - An object, typically as returned by '$(window)', that is being scrolled on.
      */
+    
      this.headerSticky = function(container) {
         container.scroll(function () {
             var scrollTop = container.scrollTop();
