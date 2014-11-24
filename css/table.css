@@ -100,7 +100,7 @@ body {
     display: inline-block; }
 
 .cm-hidden {
-  display: none; }
+  display: none !important; }
 
 #cm-floater {
   z-index: 3;

@@ -28,23 +28,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
-var $;
-function Colme(options) {
+ 'use strict';
+ var $;
+ function Colme(options) {
 
     /**
      * Each table node is kept in this object, accessible
      * with the Id of the node (selectors.span)
      */
-    var tableNodes = {};
-    var floater = {};
+     var tableNodes = {};
+     var floater = {};
 
-    if (!options.selectors) {
+     if (!options.selectors) {
         options.selectors = {};
     }
     if (!options.attributes) {
         options.attributes = {};
     }
+    if (!options.modules){
+        options.modules = {};
+    }
+
     var classes   = {
         head  : ( options.selectors.head  ? options.selectors.head  : 'cm-thead' ),
         body  : ( options.selectors.body  ? options.selectors.body  : 'cm-tbody' ),
@@ -58,7 +62,15 @@ function Colme(options) {
         body  : '.'+ classes.body ,
         row   : '.'+ classes.row  ,
         th    : '.'+ classes.th   ,
-        td    : '.'+ classes.td   ,
+        td    : '.'+ classes.td   
+    };
+
+    var modules = {
+        resize   : options.modules.resize     === false ? false : true,
+        draggable: options.modules.draggable  === false ? false : true,
+        stickyH  : options.modules.stickyHead === false ? false : true,
+        toggleC  : options.modules.toggleable === false ? false : true,
+        addMarkup: options.modules.markup     === false ? false : true,
     };
 
     var attributes = {
@@ -67,11 +79,10 @@ function Colme(options) {
         floater : 'cm-floater',
     };
 
-   var table    = options.table;
-   var head     = table.find(selectors.head);
-   var body     = table.find(selectors.body);
-   var colCount = 0;
-   var root ;
+    var table    = options.table;
+    var head     = table.find(selectors.head);
+    var body     = table.find(selectors.body);
+    var root ;
 
 
     /**
@@ -80,7 +91,7 @@ function Colme(options) {
      * To trigger a column toggle, trigger 'colme:hideColumn' event on the table.
      */
     this.toggleable = function() {
-        table.on('colme:hideColumn', function (event, groupId) {
+        var hideCol =  function (event, groupId) {
             var elems  = table.find('.' + groupId);
             var elem = table.find('[' + attributes.id + '=' + groupId + ']'); // The head of the column group
             
@@ -89,7 +100,6 @@ function Colme(options) {
             }
 
             var node  = tableNodes[groupId];
-
             elems.addClass('cm-hidden'); // Hides descendant
             elems.filter(selectors.th).each(function () {
                 table.trigger('colme:hidden', $(this).attr(attributes.id));
@@ -102,9 +112,8 @@ function Colme(options) {
                 parent.setCellWidth();
             }
             table.trigger('colme:reflow');
-        });
-
-        table.on('colme:showColumn', function (event, groupId) {
+        }
+        var showCol = function (event, groupId) {
             var elem = table.find('[' + attributes.id + '=' + groupId + ']'); // The head of the column group
             var elems = table.find('.' + groupId); // The other cells
             if (elem.is(':visible')) {
@@ -132,9 +141,26 @@ function Colme(options) {
                 }
             }
             table.trigger('colme:reflow');
-        });
-    };
+        }
 
+        table.on('colme:hideColumn',hideCol);
+
+        table.on('colme:showColumn',showCol );
+
+        table.on("colme:toggleColumn",function(event,groupId){
+            var elem = table.find('[' + attributes.id + '=' + groupId + ']').first();
+            if ( !elem.is(":visible")){
+                showCol(event,groupId);
+                return;
+            }
+            hideCol(event,groupId);
+        });
+
+        
+    };
+    /*
+     * Returns an object representing the current layout.
+     */
     this.getLayout = function() {
         var layout = {};
         for ( var i in tableNodes ){
@@ -142,7 +168,9 @@ function Colme(options) {
         }
         return layout;
     };
-
+    /*
+     * Applies the layout specified by "layout"
+     */
     this.setLayout = function( layout ) {
         if ( typeof layout == "string"){
             layout = JSON.parse(layout);
@@ -150,26 +178,26 @@ function Colme(options) {
         var currNode;
         for ( var i in layout ){
             currNode = tableNodes[layout[i].id];
-            //currNode.width = layout[i].width;
-            var aux={};
-            for ( var j in currNode.children  ){
-                aux[ currNode.children[j].id ] = currNode.children[j];
+                //currNode.width = layout[i].width;
+                var aux={};
+                for ( var j in currNode.children  ){
+                    aux[ currNode.children[j].id ] = currNode.children[j];
+                }
+                
+                var newChildren =[];
+                for ( var k in layout[i].children ){
+                    newChildren.push( aux[ layout[i].children[k].id] );
+                }
+                currNode.children = newChildren;
             }
-            
-            var newChildren =[];
-            for ( var k in layout[i].children ){
-                newChildren.push( aux[ layout[i].children[k].id] );
-            }
-            currNode.children = newChildren;
-        }
 
-        applyOrderWidthAndVisibility(layout);
-    };
+            applyOrderWidthAndVisibility(layout);
+        };
 
     /** 
      * Applies order, width and visibility
      */
-    function applyOrderWidthAndVisibility (layout) {
+     function applyOrderWidthAndVisibility (layout) {
         var stack = [{node :root , index :0}];
 
         do{
@@ -217,7 +245,7 @@ function Colme(options) {
      * @author Your Heart
      * @param {Hapiness} lots_of - The stuff dreams are made of.
      */
-    function doYouBelieveInMiracles() {
+     function doYouBelieveInMiracles() {
         return 'Hey! Thank You for using this plugin! We really had a blast making it! Kisses if you are a hot girl!';
     }
 
@@ -227,7 +255,7 @@ function Colme(options) {
      * @author lopis
      * @author carlosmtx
      */
-    this.resizable = function() {
+     this.resizable = function() {
         var colIds = head.find(selectors.th + '[' + attributes.id + ']');
 
         $('<style>.ui-resizable-helper::after{height: '+table.height()+'px;}</style>').appendTo('head');
@@ -341,7 +369,7 @@ function Colme(options) {
      * @method draggable
      * Enables dragging columns or column groups. Columns can be dragged within their group.
      */
-    this.draggable = function() {
+     this.draggable = function() {
 
         // Initialize handler for column dragging
         head.find(selectors.th).mousedown(function(event) {
@@ -428,7 +456,7 @@ function Colme(options) {
      * @param {Object} afterElement - The element being inserted into 'element'.
      * @author lopis
      */
-    function afterLastOfType (element, groupId, afterElement) {
+     function afterLastOfType (element, groupId, afterElement) {
         var lastOfGroup = element.find('.' + groupId).last();
         if (lastOfGroup.length > 0) {
             lastOfGroup.after(afterElement);
@@ -442,7 +470,7 @@ function Colme(options) {
      * @param {Event} e - The mouse move event.
      * @author lopis
      */
-    function refreshFloater (e) {
+     function refreshFloater (e) {
         var scrollLeft = $(window).scrollLeft();
         var pos = Math.max(Math.min(e.pageX, floater.upperBoundX- scrollLeft), floater.lowerBoundX- scrollLeft); 
         floater.DOMelement.css('transform', 'translate3D('+pos+'px, 0, 0)');
@@ -455,8 +483,8 @@ function Colme(options) {
      *
      * @author lopis
      */
-    function stopDrag () {
-        
+     function stopDrag () {
+
         var floaterHead = floater.DOMelement.find(selectors.head);
         var floaterBody = floater.DOMelement.find(selectors.body);
         var placeHolder = $('.cm-drag-placeholder');
@@ -503,7 +531,7 @@ function Colme(options) {
      *
      * @author lopis
      */
-    function refreshPlaceHolder (event) {
+     function refreshPlaceHolder (event) {
 
         var firstPlaceholder = table.find('.cm-drag-placeholder').first();
         var offset           = firstPlaceholder.offset().left;
@@ -529,7 +557,7 @@ function Colme(options) {
      * @param {Boolean} isForward - True if the placeholder should move forward, false otherwise.
      * @author lopis
      */
-    function movePlaceholder (firstPlaceholder, isForward, siblingId) {
+     function movePlaceholder (firstPlaceholder, isForward, siblingId) {
         floater.DOMelement.find(selectors.row).each(function (rowIndex) {
             var tableRow = table.find(selectors.row).eq(rowIndex);
             var span = tableRow.find('.' + siblingId + ',[' + attributes.id + '=' + siblingId + ']').length;
@@ -551,7 +579,7 @@ function Colme(options) {
      *
      * @param {Object} container - An object, typically as returned by '$(window)', that is being scrolled on.
      */
-    this.headerSticky = function(container) {
+     this.headerSticky = function(container) {
         container.scroll(function () {
             var scrollTop = container.scrollTop();
             var offsetTop = container.offset() ? 0 : table.offset().top; 
@@ -577,7 +605,7 @@ function Colme(options) {
      *
      * @author lopis
      */
-    this.updateTable = function() {
+     this.updateTable = function() {
         // Refreshed the table tree representation.
         for ( var i = 0; i < tableNodes.length; i++) {
             delete tableNodes[i];
@@ -609,7 +637,8 @@ function Colme(options) {
      * @author carlosmtx
      * @author lopis
      */
-    function createTree(){
+     function createTree(){
+        var colCount=0;
         head.find(selectors.row).first().find(selectors.th).each(function () {
             var c = parseInt($(this).attr(attributes.span));
             colCount += !c ? 1 : c;
@@ -659,7 +688,7 @@ function Colme(options) {
         var rows = body.find(selectors.row);
         var tds = body.find(selectors.td);
         /* Searches which 'parent' this cell belongs to by 
-         * using the values of the colspan */
+        * using the values of the colspan */
         head.find(selectors.row).last().find(selectors.th).each(function () {
             var thNode = tableNodes[$(this).attr(attributes.id)];
             thCursor += thNode.colspan;
@@ -705,20 +734,22 @@ function Colme(options) {
                 $(this).addClass(classes.td);
             });
         });
-
     }
-
-    addMarkup();
+    if ( modules.addMarkup ){
+        addMarkup();
+    }
+    
     createTree();
+    
     this.refreshWidth(root);
 
     /* Inits jquery plugin and sets handlers for resizing */
-    if (options.resizable) {
+    if ( modules.resize ) {
         this.resizable();
     }
 
     /* Creates floater and sets dragging handlers */
-    if (options.draggable) {
+    if ( modules.draggable ) {
         var currentFloater = $('#' + attributes.floater);
         if (currentFloater.length === 0) {
             floater.DOMelement = $('<div>', {id: attributes.floater});
@@ -732,20 +763,18 @@ function Colme(options) {
 
         this.draggable();
     }
-
     /* Sets scroll handlers to control table header */
-    if (options.sticky) {
+    if ( modules.stickyH ) {
         this.headerSticky(options.sticky);
     }
 
     /* Sets toggling handlers */
-    if (options.toggleable) {
+    if (modules.toggleC) {
         this.toggleable();
     }
 
     doYouBelieveInMiracles();
     table.trigger('colme:isReady');
-
     /**
      * The structure that defines the table is represented internally by a tree, composed of Nodes.
      * The tree can be transversed in both directions to allow propagation of actions up and down.
@@ -760,7 +789,7 @@ function Colme(options) {
      * @author carlosmtx
      * @author lopis
      */
-    function Node (parent,colspan,colspanOffset,newId){
+     function Node (parent,colspan,colspanOffset,newId){
 
         this.parent         = parent;
         this.children       = [];
@@ -787,33 +816,33 @@ function Colme(options) {
         this.getWidth = function(){
 
             return this.DOMelement.width() + 
-                    parseInt(this.DOMelement.css('border-left-width')) + 
-                    parseInt(this.DOMelement.css('border-right-width')) +
-                    parseInt(this.DOMelement.css('padding-left')) +
-                    parseInt(this.DOMelement.css('padding-right'))+
-                    parseInt(this.DOMelement.css('margin-right'))+
-                    parseInt(this.DOMelement.css('margin-left'));
+            parseInt(this.DOMelement.css('border-left-width')) + 
+            parseInt(this.DOMelement.css('border-right-width')) +
+            parseInt(this.DOMelement.css('padding-left')) +
+            parseInt(this.DOMelement.css('padding-right'))+
+            parseInt(this.DOMelement.css('margin-right'))+
+            parseInt(this.DOMelement.css('margin-left'));
         };
 
         this.getWidthResize = function(targetWidth){
             return targetWidth - 
-                    (
-                       parseInt(this.DOMelement.css('border-left-width')) + 
-                       parseInt(this.DOMelement.css('border-right-width')) +
-                       parseInt(this.DOMelement.css('padding-left')) +
-                       parseInt(this.DOMelement.css('padding-right'))+
-                       parseInt(this.DOMelement.css('margin-right'))+
-                       parseInt(this.DOMelement.css('margin-left'))
-                    );
+            (
+               parseInt(this.DOMelement.css('border-left-width')) + 
+               parseInt(this.DOMelement.css('border-right-width')) +
+               parseInt(this.DOMelement.css('padding-left')) +
+               parseInt(this.DOMelement.css('padding-right'))+
+               parseInt(this.DOMelement.css('margin-right'))+
+               parseInt(this.DOMelement.css('margin-left'))
+               );
         };
 
         this.getImmutableWidth = function(){
             return parseInt(this.DOMelement.css('border-left-width')) + 
-                   parseInt(this.DOMelement.css('border-right-width')) +
-                   parseInt(this.DOMelement.css('padding-left')) +
-                   parseInt(this.DOMelement.css('padding-right'))+
-                   parseInt(this.DOMelement.css('margin-right'))+
-                   parseInt(this.DOMelement.css('margin-left'));
+            parseInt(this.DOMelement.css('border-right-width')) +
+            parseInt(this.DOMelement.css('padding-left')) +
+            parseInt(this.DOMelement.css('padding-right'))+
+            parseInt(this.DOMelement.css('margin-right'))+
+            parseInt(this.DOMelement.css('margin-left'));
         };
 
         this.getMutableWidth = function(){
@@ -828,11 +857,11 @@ function Colme(options) {
         };
 
         this.toJSON = function() {
-          return {
+            return {
                 colspan : this.colspan,
                 id : this.id,
                 children : this.children
-          };
+            };
         };
 
         this.toObject = function() {
@@ -842,12 +871,11 @@ function Colme(options) {
                 width    : this.DOMelement.width(),
                 children : [],
                 visible  : !this.DOMelement.hasClass('cm-hidden'),
-          };
-
-          for ( var i in this.children ){
-            obj.children.push( this.children[i].toObject() );
-          }
-          return obj;
+            };
+            for ( var i in this.children ){
+                obj.children.push( this.children[i].toObject() );
+            }
+            return obj;
         };
 
         /**
@@ -856,7 +884,7 @@ function Colme(options) {
          *
          * @author lopis
          */
-        this.setCellWidth = function () {
+         this.setCellWidth = function () {
             if (!this.children || this.children.length < 1) {
                 return this.DOMelement.is(':visible') ? this.getWidth() : 0;
             } else {
@@ -882,7 +910,7 @@ $.fn.colme = function(options) {
 
     var c = new Colme(options);
 
-        /* Public functions */
+    /* Public functions */
     return {
         getLayout: c.getLayout,
         setLayout: c.setLayout,

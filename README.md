@@ -19,7 +19,7 @@ The following features are available in colme:
 * * *
 
 ### Usage
-If you want to test a working demo, checkout this link: http://codepen.io/lopis/pen/myyrLY
+If you want to test a working demo, checkout this link: http://codepen.io/lopis/pen/OPVVPP
 
 To apply `colme` to your table, select your table with jQuery and call `colme()` on it, passing the necessary options.
 

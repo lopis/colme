@@ -1,0 +1,25 @@
+.drag-place-holder, .ui-resizable {
+  cursor: move; }
+
+.ui-resizable-helper {
+  height: 1000px;
+  width: 1px;
+  overflow: visible !important; }
+  .ui-resizable-helper::after {
+    z-index: 49 !important;
+    border-right: 3px solid white;
+    position: absolute;
+    right: 0px;
+    width: 1px;
+    display: inline-block; }
+
+.cm-hidden {
+  display: none !important; }
+
+#cm-floater {
+  z-index: 3;
+  transform: translateZ(0); }
+  #cm-floater .cm-td, #cm-floater .cm-th {
+    color: black; }
+
+/*# sourceMappingURL=jquery.colme.css.map */

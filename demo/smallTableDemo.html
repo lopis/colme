@@ -1912,31 +1912,42 @@
       var init = new Date();
 
       colmes[0] = $('#cm-table1').colme({
-        resizable: true,
-        draggable: true,
-        toggleable: true,
+        modules : {
+          resize      : false,
+          draggable   : true,
+          stickyHead  : false,
+          toggleable  : true,
+          markup      : true
+
+        },
         sticky: $("#container1"),
       });
       createToggles($('#cm-table1'), $('#configs1'));
       handleLayouts(0, $("#configs1"), 0);
       console.log('Ready in ' + (new Date() - init) + 'ms');
+      
       init = new Date();
-
       colmes[1] = $('#cm-table2').colme({
-        resizable: true,
-        draggable: true,
-        toggleable: true,
+        modules : {
+          resizable : true,
+          draggable : true,
+          toggleable: true,
+        },
         sticky: $(window),
       });
+
+
       createToggles($('#cm-table2'), $('#configs2'));
       handleLayouts(1, $("#configs2"), 1);
       console.log('Ready in ' + (new Date() - init) + 'ms');
       init = new Date();
 
       colmes[2] = $('#cm-table3').colme({
-        resizable: true,
-        draggable: true,
-        toggleable: true,
+        modules : {
+          resizable : false,
+          draggable : true,
+          toggleable: true,
+        },
         sticky: $(window),
       });
       createToggles($('#cm-table3'), $('#configs3'));
