@@ -7,8 +7,7 @@ body {
   display: inline-block; }
   .cm-table .cm-thead, #cm-floater .cm-thead {
     z-index: 3;
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden; }
+    transform: translateZ(0); }
   .cm-table .cm-tr, #cm-floater .cm-tr {
     font-size: 0;
     display: block; }

@@ -585,18 +585,16 @@
             var offsetTop = container.offset() ? 0 : table.offset().top; 
             var offsetBottom = table.height() - head.height();
             if (scrollTop > offsetTop + offsetBottom) {
-                head.css('transform', 'translateY('+offsetBottom+'px)');
+                head.css('transform', 'translate3d(0,'+offsetBottom+'px,0)');
             } else if(scrollTop > offsetTop) {
-                head.css('transform', 'translateY('+(scrollTop-offsetTop)+'px)');
+                head.css('transform', 'translate3d(0,'+(scrollTop-offsetTop)+'px,0)');
             } else {
-                head.css('transform', 'translateY(0px)');
+                head.css('transform', 'translate3d(0px)');
             }
         });
-
-        $(document).ready(function () {
-            container.scroll(); // triggers the repositioning of the header
-        });
+        container.scroll(); // triggers the repositioning of the header
     };
+
 
     /**
      * @method updateTable
