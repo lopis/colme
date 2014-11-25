@@ -109,13 +109,13 @@ Makes the header sticky when the container scrolls past the top.(container)
 **container**: `Object`, An object, typically as returned by `$(window)`, that is being scrolled on.
 
 
-** `Colme.updateTable()` **
+`Colme.updateTable()`
 When the table structure has been manually changed, such as when lines or columns have been inserted or removed, the table tree must be updated, or [colme] won't behave correctly. If you add columns, layouts saved before may break.
 
-** `Colme.getLayout()` **
+`Colme.getLayout()`
 Returns a representation of the current table layout, including column order, visibility and width. Keep in mind that column hierarchy (i.e. which column belongs to which column group) is not kept, as that is infered by the column spans. If you change the structure of the table, old layouts may break.
 
-** `Colme.setLayout(layout)` **
+`Colme.setLayout(layout)`
 Using `getLayout` you can save multiple layouts. Pass a layout to `setLayout` to apply it.
 
 * * *
@@ -123,7 +123,7 @@ Using `getLayout` you can save multiple layouts. Pass a layout to `setLayout` to
 ### Events
 Colme listens or triggers to these events.
 
-** `colme:hideColumn`, `colme:showColumn` **
+`colme:hideColumn`, `colme:showColumn`
 Trigger this event on the table to hide or show a column or column group. Pass it the ID of the column you want to hide or show, like this:
 
 ```javascript
@@ -132,7 +132,7 @@ $(#my-table).trigger('colme:hideColumn', column.attr('data-cm-id'));
 $(#my-table).trigger('colme:showColumn', column.attr('data-cm-id'));
 ```
 
-** `colme:hidden`, `colme:shown` **
+`colme:hidden`, `colme:shown`
 This event is triggered by colme. When you hide or show one column, other columns can become hidden or shown in consequence. This event includes the IDs of the columns that were hidden.
 
 ```javascript
