@@ -23,37 +23,44 @@ If you want to test a working demo, checkout this link: http://codepen.io/lopis/
 
 To apply `colme` to your table, select your table with jQuery and call `colme()` on it, passing the necessary options.
 
-``javascript
+```javascript
       $('#cm-table3').colme({
         resizable: true,
         draggable: true,
         toggleable: true,
         sticky: $(window)
       });
-``
+```
 
 #### Options
 
 ##### Resizable
-Default value is false. If set to true, each cell of the table header will get an handle that can be dragged left and right to resize that column.
+Default value is true. Each cell of the table header will get an handle that can be dragged left and right to resize that column.
 
 ##### Draggable
-Default value if false. If set to true, each cell of the table will now be dragged and dropped to move the columns.
+Default value is true. Each cell of the table will now be dragged and dropped to move the columns.
 
 ##### Toggleable
-Default value if false. If set to true, the table will be listening for the the event `colme:hideColumn` to hide a column or column group.
+Default value is true. The table will be listening for the the event `colme:hideColumn` to hide a column or column group.
 
+##### StickyHead
+Default value is true. The table head will stick as you scroll the selected element.
+  
 ##### Sticky
 Default value is undefined. If set to an element - the container - the table header will stick to the top of the container when the container is scrolled.
 
 ##### Selectors and Attributes
 It is possible to use custom classes and attribute names if you need to integrate colme with an existing site.
 
-``javascript
+```javascript
       $('#my-table').colme({
-        resizable: true,
-        draggable: true,
-        toggleable: true,
+        modules : {
+          resizable : true,
+          draggable : true,
+          toggleable: true,
+          stickyHead: true,
+          markup    : true
+        },
         sticky: $(window),
         selectors: {
           head : 'cm-thead',
@@ -67,7 +74,7 @@ It is possible to use custom classes and attribute names if you need to integrat
           span  : 'data-cm-span',
         }
       });
-``
+```
   * `head`: the class of the table header; defaults to `cm-thead`
   * `body`: the class of the table body; defaults to `cm-tbody`
   * `row`: the class of the table row; defaults to `cm-tr`
@@ -81,16 +88,16 @@ It is possible to use custom classes and attribute names if you need to integrat
 ### Public methods
 If you need to use one of the features, but don't want to activate them immediately, you can call one of the following methods to enable them manually. There are also two methods available to manage layouts.
 
-** `Colme.toggleable()` **
+`Colme.toggleable()`
 Enables hiding and showing groups of columns.
 To trigger a column toggle, trigger 'colme:hideColumn' event on the table.()
+The class `cm-hidden` is used to toggle the columns visibility
 
-
-** `Colme.resizable()` **
+`Colme.resizable()`
 Makes columns resizable
 
 
-** `Colme.draggable()` **
+`Colme.draggable()`
 Enables dragging columns or column groups. Columns can be dragged within their group.() 
 
 
@@ -102,13 +109,13 @@ Makes the header sticky when the container scrolls past the top.(container)
 **container**: `Object`, An object, typically as returned by `$(window)`, that is being scrolled on.
 
 
-** `Colme.updateTable()` **
+`Colme.updateTable()`
 When the table structure has been manually changed, such as when lines or columns have been inserted or removed, the table tree must be updated, or [colme] won't behave correctly. If you add columns, layouts saved before may break.
 
-** `Colme.getLayout()` **
+`Colme.getLayout()`
 Returns a representation of the current table layout, including column order, visibility and width. Keep in mind that column hierarchy (i.e. which column belongs to which column group) is not kept, as that is infered by the column spans. If you change the structure of the table, old layouts may break.
 
-** `Colme.setLayout(layout)` **
+`Colme.setLayout(layout)`
 Using `getLayout` you can save multiple layouts. Pass a layout to `setLayout` to apply it.
 
 * * *
@@ -116,7 +123,7 @@ Using `getLayout` you can save multiple layouts. Pass a layout to `setLayout` to
 ### Events
 Colme listens or triggers to these events.
 
-** `colme:hideColumn`, `colme:showColumn` **
+`colme:hideColumn`, `colme:showColumn`
 Trigger this event on the table to hide or show a column or column group. Pass it the ID of the column you want to hide or show, like this:
 
 ```javascript
@@ -125,7 +132,7 @@ $(#my-table).trigger('colme:hideColumn', column.attr('data-cm-id'));
 $(#my-table).trigger('colme:showColumn', column.attr('data-cm-id'));
 ```
 
-** `colme:hidden`, `colme:shown` **
+`colme:hidden`, `colme:shown`
 This event is triggered by colme. When you hide or show one column, other columns can become hidden or shown in consequence. This event includes the IDs of the columns that were hidden.
 
 ```javascript
@@ -138,5 +145,5 @@ $(#my-table).on('colme:shown', function(event, groupIds){
 });
 ```
 
-** `colme:isReady` **
+`colme:isReady`m
 The plugin may take a bit to load (typically less than 100ms). When the table is ready, this event is triggered. If you call ``updateTable()``, this event is also triggered.

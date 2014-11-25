@@ -19,6 +19,8 @@ body {
   .cm-thead {
     z-index: 3;
     transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
   }
   .cm-tr {
     font-size: 0; // Fixes space between cells
