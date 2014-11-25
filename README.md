@@ -51,9 +51,13 @@ It is possible to use custom classes and attribute names if you need to integrat
 
 ``javascript
       $('#my-table').colme({
-        resizable: true,
-        draggable: true,
-        toggleable: true,
+        modules : {
+          resizable : true,
+          draggable : true,
+          toggleable: true,
+          stickyHead: true,
+          markup    : true
+        }
         sticky: $(window),
         selectors: {
           head : 'cm-thead',
