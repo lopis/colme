@@ -49,7 +49,7 @@ Default value is undefined. If set to an element - the container - the table hea
 ##### Selectors and Attributes
 It is possible to use custom classes and attribute names if you need to integrate colme with an existing site.
 
-``javascript
+```javascript
       $('#my-table').colme({
         modules : {
           resizable : true,
@@ -71,7 +71,7 @@ It is possible to use custom classes and attribute names if you need to integrat
           span  : 'data-cm-span',
         }
       });
-``
+```
   * `head`: the class of the table header; defaults to `cm-thead`
   * `body`: the class of the table body; defaults to `cm-tbody`
   * `row`: the class of the table row; defaults to `cm-tr`
