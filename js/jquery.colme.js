@@ -112,7 +112,7 @@
                 parent.setCellWidth();
             }
             table.trigger('colme:reflow');
-        }
+        };
         var showCol = function (event, groupId) {
             var elem = table.find('[' + attributes.id + '=' + groupId + ']'); // The head of the column group
             var elems = table.find('.' + groupId); // The other cells
@@ -141,15 +141,15 @@
                 }
             }
             table.trigger('colme:reflow');
-        }
+        };
 
         table.on('colme:hideColumn',hideCol);
 
         table.on('colme:showColumn',showCol );
 
-        table.on("colme:toggleColumn",function(event,groupId){
+        table.on('colme:toggleColumn',function(event,groupId){
             var elem = table.find('[' + attributes.id + '=' + groupId + ']').first();
-            if ( !elem.is(":visible")){
+            if ( !elem.is(':visible')){
                 showCol(event,groupId);
                 return;
             }
@@ -172,7 +172,7 @@
      * Applies the layout specified by "layout"
      */
     this.setLayout = function( layout ) {
-        if ( typeof layout == "string"){
+        if ( typeof layout == 'string'){
             layout = JSON.parse(layout);
         }
         var currNode;
