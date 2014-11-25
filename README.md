@@ -38,13 +38,13 @@ To apply `colme` to your table, select your table with jQuery and call `colme()`
 Default value is true. Each cell of the table header will get an handle that can be dragged left and right to resize that column.
 
 ##### Draggable
-Default value if true. Each cell of the table will now be dragged and dropped to move the columns.
+Default value is true. Each cell of the table will now be dragged and dropped to move the columns.
 
 ##### Toggleable
-Default value if true. The table will be listening for the the event `colme:hideColumn` to hide a column or column group.
+Default value is true. The table will be listening for the the event `colme:hideColumn` to hide a column or column group.
 
 ##### StickyHead
-Default value if true. The table head will stick as you scroll the selected element.
+Default value is true. The table head will stick as you scroll the selected element.
   
 ##### Sticky
 Default value is undefined. If set to an element - the container - the table header will stick to the top of the container when the container is scrolled.
@@ -145,5 +145,5 @@ $(#my-table).on('colme:shown', function(event, groupIds){
 });
 ```
 
-`colme:isReady`
+`colme:isReady`m
 The plugin may take a bit to load (typically less than 100ms). When the table is ready, this event is triggered. If you call ``updateTable()``, this event is also triggered.
