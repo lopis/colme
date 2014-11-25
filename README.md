@@ -145,5 +145,5 @@ $(#my-table).on('colme:shown', function(event, groupIds){
 });
 ```
 
-** `colme:isReady` **
+`colme:isReady`
 The plugin may take a bit to load (typically less than 100ms). When the table is ready, this event is triggered. If you call ``updateTable()``, this event is also triggered.
