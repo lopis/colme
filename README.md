@@ -57,7 +57,7 @@ It is possible to use custom classes and attribute names if you need to integrat
           toggleable: true,
           stickyHead: true,
           markup    : true
-        }
+        },
         sticky: $(window),
         selectors: {
           head : 'cm-thead',
