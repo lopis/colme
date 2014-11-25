@@ -23,14 +23,14 @@ If you want to test a working demo, checkout this link: http://codepen.io/lopis/
 
 To apply `colme` to your table, select your table with jQuery and call `colme()` on it, passing the necessary options.
 
-``javascript
+```javascript
       $('#cm-table3').colme({
         resizable: true,
         draggable: true,
         toggleable: true,
         sticky: $(window)
       });
-``
+```
 
 #### Options
 
