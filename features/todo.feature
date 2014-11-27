@@ -32,11 +32,6 @@ Feature: Todo
         And   The cell 2º Sem should not be visible
         And   The cell 3º Tri should not be visible
         And   The cell 4º Tri should not be visible
-Feature: Todo
-
-    In order to use colme
-    As a user
-    I want to be able to drag columns, toggle their visibility and resize them
 
     @javascript
     Scenario: Drag one column
