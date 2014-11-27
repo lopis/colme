@@ -11,15 +11,15 @@
  *
  * @author abraham
  */
-class ColmeTests extends PHPUnit_Framework_TestCase
-{
+class ColmeTests extends PHPUnit_Framework_TestCase {
+    
     
     /**
      * @var \RemoteWebDriver
      */
     protected $webDriver;
     
-    protected $url = 'http://colme/demo/smallTableDemo.html';
+    protected $url = 'http://www.html.dev/colme/demo/smallTableDemo.html';
     
     public function setUp()
     {
@@ -29,8 +29,7 @@ class ColmeTests extends PHPUnit_Framework_TestCase
     
     protected function tearDown()
     {
-        if ($this->hasFailed())
-        {
+        if( $this->hasFailed() ) {
             $date = "screenshot_" . date('Y-m-d-H-i-s') . ".png" ;
             $this->webdriver->getScreenshotAndSaveToFile( $date );
         }
