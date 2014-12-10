@@ -1,6 +1,9 @@
 
 ![colme](http://i.imgur.com/8mR7nem.png)
 
+
+[![Codacy Badge](https://www.codacy.com/project/badge/fe0768088c794175b8bd2ae7aaea77d0)](https://www.codacy.com/public/joaopclopes/colme)
+
 Tables are often a headache to use. They're also a pain to code and manipulate. Colme.js was born out of the need to interact with large tables in a meaningful and friendly way. This plugin wraps a bunch of cool table features that can be applied to div based tables (not table based tables). 
 
 There's always a debate over which approach is the best: using tables or using divs. There's really no need to replace tables with divs if all you want is to display tabular data - that's why they exist. But as soon as you need to make more complex manipulations, the problems grow. While developing this plugin, we tried divs and tables, and came up with the following summary of the pros and cons. TL;DR, divs won.
